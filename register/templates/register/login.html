@@ -1,0 +1,74 @@
+{% extends "accounting/base.html"%}
+
+{% load widget_tweaks %}
+
+{% block content %}
+
+<style>
+    .global-container {
+        height: 75vh;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card {
+        width: 750px;
+    }
+
+    .size-header {
+        font-size: xx-large;
+    }
+</style>
+
+{% if messages %}
+<div class="row d-flex justify-content-center">
+    <div class=" text-center col-sm-6 col-sm-offset-3">
+        {% for message in messages %}
+        <div {% if message.tags == "error" %} class="alert alert-danger" {% else %}
+            class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+            <p>{{ message }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endif %}
+
+
+
+<div class="global-container">
+    <div class="card login-form">
+        <div class="card-body">
+            <h1 class="card-title text-center size-header"><strong>Login</strong></h1>
+            <hr>
+            <div class="card-text">
+                <!--
+			<div class="alert alert-danger alert-dismissible fade show" role="alert">Incorrect username or password.</div> -->
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Email address</label>
+                        {% render_field form.email class="form-control form-control-sm" type="email" %}
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Password</label>
+                        {% render_field form.password class="form-control form-control-sm" type="password" %}
+                        <a href="{% url 'reset_password' %}" style="float:right;font-size:12px;"
+                            class="mt-3 mb-3">Forgot
+                            password?</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+
+                    <div class="sign-up mt-3">
+                        Don't have an account? <a href="{% url 'signup' %}">Create One</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
