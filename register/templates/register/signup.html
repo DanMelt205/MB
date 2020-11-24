@@ -1,0 +1,167 @@
+{% extends "accounting/base.html"%}
+
+{% load widget_tweaks %}
+
+{% block content %}
+
+<style>
+    .global-container {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card {
+        width: 750px;
+    }
+
+    .size-header {
+        font-size: xx-large;
+    }
+
+    .error {
+        color: red;
+    }
+</style>
+
+{% if messages %}
+<div class="row d-flex justify-content-center">
+    <div class=" text-center col-sm-6 col-sm-offset-3">
+        {% for message in messages %}
+        <div {% if message.tags == "error" %} class="alert alert-danger" {% else %}
+            class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+            <p>{{ message }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endif %}
+
+<div class="global-container mt-5">
+    <div class="card login-form">
+        <div class="card-body">
+            <p class="card-title text-center size-header"><strong>Register</strong></p>
+            <p class="text-center lead text-muted">create your moneybalancer account today.</p>
+            <hr>
+            <div class="card-text">
+                <!--
+			<div class="alert alert-danger alert-dismissible fade show" role="alert">Incorrect username or password.</div> -->
+                <form action="" method="post" id="registerForm">
+                    {% csrf_token %}
+
+                    <div class="row">
+                        <div class="form-group col">
+                            <label for="firstName">First Name</label>
+                            {% render_field form.first_name class="form-control form-control-sm" type="text" placeholder="First Name" %}
+                        </div>
+                        <div class="form-group col">
+                            <label for="lastName">Last Name</label>
+                            {% render_field form.last_name class="form-control form-control-sm" type="text" placeholder="Last Name" %}
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col">
+                            <label for="email">Email address</label>
+                            {% render_field form.email class="form-control form-control-sm" type="email" placeholder="name@domain.com" %}
+                        </div>
+                        <div class="form-group col">
+                            <label for="dob">Date of Birth</label>
+                            {% render_field form.date_of_birth class="form-control form-control-sm" id="dob" type="text" placeholder="05/17/1901" %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col">
+                            <label for="password1">Password</label>
+                            {% render_field form.password1 class="form-control form-control-sm" minlength="8" type="password" placeholder="Password" %}
+                        </div>
+                        <div class="form-group col">
+                            <label for="password2">Confirm Password</label>
+                            {% render_field form.password2 class="form-control form-control-sm" minlength="8" type="password" placeholder="Confirm Password" %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col">
+                            <label for="security_question">Security Question</label>
+                            {% render_field form.security_question class="form-control form-control-sm" type="select" %}
+                        </div>
+
+                        <div class="form-group col">
+                            <label for="security_answer">Security Answer</label>
+                            {% render_field form.security_answer class="form-control form-control-sm" type="text" placeholder="Security Answer" %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="user_type">Account Type</label>
+                        {% render_field form.user_type class="form-control form-control-sm" type="select" %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        {% render_field form.address class="form-control form-control-sm" type="text" autocomplete="on" placeholder="123 Street Place" %}
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col">
+                            <label for="city">City</label>
+                            {% render_field form.city class="form-control form-control-sm" type="text" autocomplete="on" placeholder="City"%}
+                        </div>
+                        <div class="form-group col">
+                            <label for="state">State</label>
+                            {% render_field form.state class="form-control form-control-sm" type="text" autocomplete="on" placeholder="Alabama" %}
+                        </div>
+                        <div class="form-group col">
+                            <label for="zip">Zip</label>
+                            {% render_field form.zip_code class="form-control form-control-sm" type="text" placeholder="Zip Code"%}
+                        </div>
+                    </div>
+
+
+                    <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+
+                    <div class="sign-up mt-3">
+                        Already have an account? <a href="{% url 'login' %}">Login</a>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $("#dob").datepicker({
+        changeMonth: true,
+        changeYear: true,
+    });
+
+    $("#registerForm").validate({
+        rules: {
+            password1: {
+                password1: true
+            },
+            password2: {
+                equalTo: "#id_password1"
+            }
+        },
+        messages: {
+            password1: {
+                password1: "Passwords must be a minimum of 8 characters, must start with a letter, have a number and a special character"
+            }
+        }
+    });
+
+    $.validator.methods.password1 = function (value, element) {
+        return this.optional(element) || /^[A-Za-z](?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/.test(value);
+    }
+
+</script>
+
+{% endblock %}
