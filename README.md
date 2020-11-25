@@ -1,6 +1,7 @@
 # MB
 
 #Applicaiton Domain Accounting
+
   -Sprint1 - Feature list for User Interface Module:  
     
     [] The login username, picture, should be displayed clearly on the top right corner of the login page once they have successfully logged into the system;
