@@ -21,13 +21,13 @@
 {% endif %}
 
 <div class="container-fluid ">
-    <a href="#user" class="btn btn-primary ml-4 mt-3" rel="jqmodal:open">Send
+    <a href="#user" class="btn btn-primary ml-5 mt-3" rel="jqmodal:open">Send
         Email</a>
 
-    <div class="d-flex row justify-content-center">
+    <div class="p-5">
 
 
-        <table class="table table-hover table-bordered ml-5 mt-3">
+        <table class="table table-hover table-bordered">
             <thead>
                 <tr>
 
@@ -69,38 +69,39 @@
             </tbody>
         </table>
 
-        <form method="POST" action="" id="user" class="jqmodal">
-            {% csrf_token %}
-            <div class="form-group">
-                {% render_field form.to_email class="form-control form-control-sm" type="select" %}
-            </div>
-            <div class="form-group">
-                {% render_field form.subject class="form-control form-control-sm" type="text" placeholder="Subject" %}
-            </div>
-            <div class="form-group">
-                {% render_field form.message class="form-control form-control-sm" rows="15" placeholder="Message" %}
-            </div>
-            <button type="submit" class="btn btn-primary btn-block">Send Email</button>
 
-        </form>
-
-
-        <ul class="pagination align-item-center">
-            {% if current_page.has_previous %}
-            <li class="page-item"><a class="page-link" href="?page={{ current_page.previous_page_number }}">Previous</a>
-            </li>
-            {% endif %}
-            {% for page in paginator.page_range %}
-            <li class="page-item {% if page == current_page.number %}active{% endif %}">
-                <a class="page-link" href="?page={{ page }}">{{ page }}</a>
-            </li>
-            {% endfor %}
-            {% if current_page.has_next %}
-            <li class="page-item"><a class="page-link" href="?page={{ current_page.next_page_number }}">Next</a></li>
-            {% endif %}
-        </ul>
 
     </div>
+
+    <ul class="pagination justify-content-center">
+        {% if current_page.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ current_page.previous_page_number }}">Previous</a>
+        </li>
+        {% endif %}
+        {% for page in paginator.page_range %}
+        <li class="page-item {% if page == current_page.number %}active{% endif %}">
+            <a class="page-link" href="?page={{ page }}">{{ page }}</a>
+        </li>
+        {% endfor %}
+        {% if current_page.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ current_page.next_page_number }}">Next</a></li>
+        {% endif %}
+    </ul>
 </div>
+
+<form method="POST" action="" id="user" class="jqmodal">
+    {% csrf_token %}
+    <div class="form-group">
+        {% render_field form.to_email class="form-control form-control-sm" type="select" %}
+    </div>
+    <div class="form-group">
+        {% render_field form.subject class="form-control form-control-sm" type="text" placeholder="Subject" %}
+    </div>
+    <div class="form-group">
+        {% render_field form.message class="form-control form-control-sm" rows="15" placeholder="Message" %}
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Send Email</button>
+
+</form>
 
 {% endblock %}

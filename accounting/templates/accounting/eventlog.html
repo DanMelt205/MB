@@ -1,9 +1,9 @@
 {% extends "accounting/base.html"%}
 
 {% load widget_tweaks %}
+{% load humanize %}
 
 {% block content %}
-
 
 
 {% if messages %}
@@ -20,70 +20,149 @@
 </div>
 {% endif %}
 
-<div class="container-fluid d-flex row justify-content-center">
+<div class="container-fluid ">
 
-    <a href="#user" class="btn btn-primary mt-3" rel="jqmodal:open">Send
-        Email</a>
-
-    <table class="table table-hover table-bordered ml-5 mt-3">
-        <thead>
-            <tr>
-
-                <th scope="col">Username</th>
-                <th scope="col">Email</th>
-                <th scope="col">First</th>
-                <th scope="col">Last</th>
-                <th scope="col">Active</th>
-                <th scope="col">Account Type</th>
-                <th scope="col">Password Expire</th>
-
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in page_obj %}
-            <tr>
-                <td><a href="{% url 'userprofilesupdate' user.id %}">{{user.username}}</a></td>
-                <td>{{user.email}}</td>
-                <td>{{user.first_name}}</td>
-                <td>{{user.last_name}}</td>
-                <td>{{user.active}}</td>
-                <td>
-                    {% if user.user_type == 1 %}
-                    <p>Accountant</p>
-                    {% elif user.user_type == 2 %}
-                    <p>Manager</p>
-                    {% else %}
-                    <p>Admin</p>
-                    {% endif %}
-                </td>
-                <td>
-                    {{user.password_expiration}}
-                </td>
-
-            </tr>
-
-
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <form method="POST" action="" id="user" class="jqmodal">
-        {% csrf_token %}
-        <div class="form-group">
-            {% render_field form.to_email class="form-control form-control-sm" type="select" %}
+    <div class="card w-25 ml-5 mt-3">
+        <div id="headingOne" class="card-header bg-white shadow-sm border-0 text-center">
+            <h6 class="mb-0 font-weight-bold">
+                <a href="#" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                    aria-controls="collapseOne"
+                    class="d-block position-relative text-dark text-uppercase collapsible-link py-2">Custom Filters</a>
+            </h6>
         </div>
-        <div class="form-group">
-            {% render_field form.subject class="form-control form-control-sm" type="text" placeholder="Subject" %}
+        <div id="collapseOne" aria-labelledby="headingOne" data-parent="#accordionExample" class="collapse">
+            <form method="get">
+                <div class="form-group col">
+                    <label for="name">Account Name</label>
+                    {% render_field filter.form.account_name class="form-control form-control-sm" type="text" placeholder="Account Name" %}
+                </div>
+
+                <div class="form-group col">
+                    <label for="number">Account Number</label>
+                    {% render_field filter.form.account_number class="form-control form-control-sm" type="text" placeholder="Account Number" %}
+                </div>
+
+                <div class="form-group col">
+                    <label for="catagory">Account Status</label>
+                    {% render_field filter.form.account_status class="form-control form-control-sm" type="select" %}
+                </div>
+                <div class="form-group col">
+                    <label for="subcatagory">Modified User</label>
+                    {% render_field filter.form.history_user class="form-control form-control-sm" type="select" %}
+                </div>
+                <div class="form-group col">
+                    <label for="balance">History Date</label>
+                    {% render_field filter.form.history_date class="form-control form-control-sm" type="number" %}
+                </div>
+                <div class="form-group col">
+                    <label for="balance">History Id</label>
+                    {% render_field filter.form.history_id class="form-control form-control-sm" type="number" %}
+                </div>
+                <!-- <div class="d-flex row justify-content-center"> -->
+                <button class="btn btn-primary m-3" type="submit">Filter</button>
+                <a href="{% url 'eventlog' %}" class="btn btn-primary m-3">Clear Filters</a>
+                <!-- </div> -->
+            </form>
         </div>
-        <div class="form-group">
-            {% render_field form.message class="form-control form-control-sm" rows="15" placeholder="Message" %}
-        </div>
-        <button type="submit" class="btn btn-primary btn-block">Send Email</button>
+    </div>
 
-    </form>
+    <div class="p-5">
+        <table class="table table-hover table-bordered ">
+            <thead>
+                <tr>
+
+                    <th scope="col">Event Id</th>
+                    <th scope="col">Account Number</th>
+                    <th scope="col">Fields</th>
+                    <th scope="col">Before</th>
+                    <th scope="col">After</th>
+                    <th scope="col">User</th>
+                    <th scope="col">Date</th>
 
 
-    <ul class="pagination align-item-center">
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 
+            An event log showing the before and after image of each record
+            added, modified, or deactivated should be generated each
+            time data changes by any of the users. The event
+            logs must be kept on a table. The user id andthe time and date of the
+            user who made change to the data must be saved. Each
+            event must have a unique auto generated ID -->
+
+                {% for account in page_obj %}
+                <tr>
+
+
+                    <td>{{account.history_id}}</td>
+                    <td>{{account.account_number}}</td>
+                    <td>
+                        <p>Account Name</p>
+                        <p>Account Description</p>
+                        <p>Account Balance</p>
+                        <p>Account Status</p>
+                    </td>
+                    <td>
+
+                        {% if not account.prev_record.account_name %}
+                        <p>None</p>
+                        {% else %}
+                        <p>{{account.prev_record.account_name}}</p>
+                        {% endif %}
+
+
+                        {% if not account.prev_record.account_description %}
+                        <p>None</p>
+                        {% else %}
+                        <p>{{account.prev_record.account_description}}</p>
+                        {% endif %}
+
+                        {% if not account.prev_record.account_balance %}
+                        <p>None</p>
+                        {% else %}
+                        <p>$ {{account.prev_record.account_balance|intcomma}}</p>
+                        {% endif %}
+
+                        {% if not account.prev_record.account_status %}
+                        <p>None</p>
+                        {% else %}
+                        <p>{{account.prev_record.account_status}}</p>
+                        {% endif %}
+
+
+                    </td>
+                    <td>
+
+                        <p>{{account.account_name}}</p>
+
+                        {% if not account.account_description %}
+                        <p>None</p>
+                        {% else %}
+                        <p>{{account.account_description}}</p>
+                        {% endif %}
+
+                        <p>$ {{account.account_balance|intcomma}}</p>
+
+                        <p>{{account.account_status}}</p>
+
+
+                    </td>
+                    <td>{{account.history_user}}</td>
+                    <td>{{account.history_date}}</td>
+
+
+
+                </tr>
+
+
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+    <ul class="pagination justify-content-center">
         {% if current_page.has_previous %}
         <li class="page-item"><a class="page-link" href="?page={{ current_page.previous_page_number }}">Previous</a>
         </li>

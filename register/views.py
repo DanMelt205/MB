@@ -177,16 +177,23 @@ class UserProfileUpdateView(UpdateView):
 
         request = self.request
         email = form.cleaned_data.get("email")
+        active = form.cleaned_data.get("active")
         deactive_date = form.cleaned_data.get("deactive_time_start")
         now = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         now_truncated = date(now.year, now.month, now.day)
         u = User.objects.filter(email=email).get()
 
-        if deactive_date == now_truncated:
-            u.active = False
-            u.save()
-            messages.success(request, "User profile has been updated.")
-            return super().form_valid(form)
+        if request.user.is_authenticated:
+
+            if deactive_date == now_truncated:
+                u.active = False
+                u.save()
+                messages.success(request, "User profile has been updated.")
+                return super().form_valid(form)
+            else:
+
+                messages.success(request, "User profile has been updated.")
+                return super().form_valid(form)
 
         messages.error(request, "Error user profile could not be updated.")
         return super().form_invalid(form)

@@ -17,7 +17,7 @@
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">Accounts<span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="{% url 'accounthome' %}">Accounts<span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#">Journals</a>
@@ -34,6 +34,9 @@
                     <a class="dropdown-item" href="{% url 'eventlog' %}">Event Log</a>
                     <a class="dropdown-item" href="{% url 'userprofiles' %}">Users</a>
                 </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'faqs' %}">FAQs</a>
             </li>
         </ul>
 
@@ -53,7 +56,8 @@
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">Accounts<span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="{% url 'accounthome' %}">Accounts<span
+                            class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Journals</a>
@@ -68,6 +72,9 @@
                         <a class="dropdown-item" href="#">Income Sheet</a>
                         <a class="dropdown-item" href="#">Trail Balance</a>
                     </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'faqs' %}">FAQs</a>
                 </li>
             </ul>
 
@@ -87,10 +94,14 @@
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                        <a class="nav-link" href="#">Accounts<span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="{% url 'accounthome' %}">Accounts<span
+                                class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Journals</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'faqs' %}">FAQs</a>
                     </li>
                 </ul>
 
@@ -110,10 +121,14 @@
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item active">
-                            <a class="nav-link" href="#">Accounts<span class="sr-only">(current)</span></a>
+                            <a class="nav-link" href="{% url 'login' %}">Accounts<span
+                                    class="sr-only">(current)</span></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Journals</a>
+                            <a class="nav-link" href="{% url 'login' %}">Journals</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'faqs' %}">FAQs</a>
                         </li>
                     </ul>
 

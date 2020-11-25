@@ -1,0 +1,13 @@
+{% extends "accounting/base.html"%}
+
+
+{% block content %}
+
+<div>
+    Account Ledger {{account.account_number}}
+
+    <a href="{% url 'accounthome' %}" class="btn btn-primary btn-block">Back</a>
+
+</div>
+
+{% endblock %}

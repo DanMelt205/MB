@@ -1,0 +1,114 @@
+{% extends "accounting/base.html"%}
+
+{% load widget_tweaks %}
+
+{% block content %}
+<style>
+    .global-container {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card {
+        width: 750px;
+    }
+
+    .size-header {
+        font-size: xx-large;
+    }
+
+    .error {
+        color: red;
+    }
+</style>
+
+{% if messages %}
+<div class="row d-flex justify-content-center">
+    <div class=" text-center col-sm-6 col-sm-offset-3">
+        {% for message in messages %}
+        <div {% if message.tags == "error" %} class="alert alert-danger" {% else %}
+            class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+            <p>{{ message }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endif %}
+
+<div class="global-container mt-5">
+    <div class="card login-form">
+        <div class="card-body">
+            <p class="card-title text-center size-header"><strong>Create Account</strong></p>
+            <hr>
+            <div class="card-text">
+                <form action="" method="post" id="accountCreate">
+                    {% csrf_token %}
+
+                    <div class="row">
+                        <div class="form-group col">
+                            <label for="name">Account Name</label>
+                            {% render_field form.account_name class="form-control form-control-sm" type="text" placeholder="Account Name" %}
+                        </div>
+
+                        <div class="form-group col">
+                            <label for="number">Account Number</label>
+                            {% render_field form.account_number class="form-control form-control-sm" type="text" placeholder="Account Number" %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Account Description</label>
+                        {% render_field form.account_description class="form-control form-control-sm" row="10" type="text" %}
+                    </div>
+
+
+                    <div class="row">
+                        <div class="form-group col">
+                            <label for="catagory">Account Catagory</label>
+                            {% render_field form.account_catagory class="form-control form-control-sm" type="select" %}
+                        </div>
+                        <div class="form-group col">
+                            <label for="subcatagory">Account Subcatagory</label>
+                            {% render_field form.account_subcatagory class="form-control form-control-sm" type="select" %}
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="form-group col">
+                            <label for="balance">Account Balance</label>
+                            {% render_field form.account_inital_balance class="form-control form-control-sm" type="number" %}
+                        </div>
+                        <div class="form-group col">
+                            <label for="statement">Account Statment</label>
+                            {% render_field form.account_statement class="form-control form-control-sm" type="select" %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Account Comment</label>
+                        {% render_field form.account_comment class="form-control form-control-sm" type="text" placeholder="Additional Comments" %}
+                    </div>
+
+
+
+
+                    <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                    <a href="{% url 'accounthome' %}" class="btn btn-primary btn-block">Back</a>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+</script>
+
+{% endblock %}
