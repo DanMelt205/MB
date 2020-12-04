@@ -1,0 +1,216 @@
+{% extends "accounting/base.html"%}
+
+{% load widget_tweaks %}
+{% load humanize %}
+
+{% block content %}
+
+
+
+{% if messages %}
+<div class="row d-flex justify-content-center">
+    <div class=" text-center col-sm-6 col-sm-offset-3">
+        {% for message in messages %}
+        <div {% if message.tags == "error" %} class="alert alert-danger" {% else %}
+            class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+            <p>{{ message }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endif %}
+
+<div class="container-fluid ">
+
+    <div class="d-flex">
+
+        <a href="{% url 'journalentry' %}" class="btn btn-primary ml-5 mt-3">Journal Entry</a>
+
+
+        <input class="form-control mr-5 mt-3 w-25 ml-auto" id="myInput" type="search" placeholder="Search..."
+            aria-label="Search">
+
+    </div>
+
+
+
+    <div class="card w-25 ml-5 mt-3">
+        <div id="headingOne" class="card-header bg-white shadow-sm border-0 text-center">
+            <h6 class="mb-0 font-weight-bold">
+                <a href="#" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                    aria-controls="collapseOne"
+                    class="d-block position-relative text-dark text-uppercase collapsible-link py-2">Jorunal Filters</a>
+            </h6>
+        </div>
+        <div id="collapseOne" aria-labelledby="headingOne" data-parent="#accordionExample" class="collapse">
+            <form method="get">
+                <div class="form-group col">
+                    <label for="name">Status</label>
+                    {% render_field filter.form.transaction_status class="form-control form-control-sm" type="select" %}
+                </div>
+                <div class="form-group col">
+                    <label for="name">Exact Date</label>
+                    {% render_field filter.form.transaction_date class="form-control form-control-sm" id="date" type="text" %}
+                </div>
+                <div class="form-group col">
+                    <label for="name">Date Range</label>
+                    {% render_field filter.form.transaction_date class="form-control form-control-sm" type="text" placeholder="Multiple values may be separated by commas." %}
+                </div>
+                <!-- <div class="d-flex row justify-content-center"> -->
+                <button class="btn btn-primary m-3" type="submit">Filter</button>
+                <a href="{% url 'journal' %}" class="btn btn-primary m-3">Clear Filters</a>
+                <!-- </div> -->
+            </form>
+        </div>
+    </div>
+
+    <div class="p-5">
+
+        <table class="table" style="border-bottom: 1px solid black;">
+            <thead>
+                <tr>
+                    <th scope="col">Date</th>
+                    <th scope="col">Journal Number</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Details</th>
+                    <th scope="col">Status</th>
+                    {% if request.user.user_type == 2 %}
+                    <th scope="col">Actions</th>
+                    {%endif%}
+                </tr>
+            </thead>
+            <tbody id=" myTable">
+
+                {% for transaction in page_obj %}
+                <tr>
+                    <td>{{transaction.transaction_date}}</td>
+                    <td>{{transaction.id}}</td>
+                    <td>{{transaction.transaction_description}}</td>
+                    <td>
+                        <table class="table ">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Account Name</th>
+                                    <th scope="col">Debit</th>
+                                    <th scope="col">Credit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for l in ledger %}
+                                <tr>
+                                    {% if transaction.id == l.transaction.id %}
+                                    {% if l.ledger_credit > 0 %}
+                                    <td style=" padding-left:5em">
+                                        {{l.account}}-{{l.account.account_name}}
+                                    </td>
+                                    {%else%}
+                                    <td>
+                                        {{l.account}}-{{l.account.account_name}}
+                                    </td>
+                                    {%endif%}
+
+                                    {% if l.ledger_debit > 0 %}
+                                    <td class="text-right">
+                                        ${{l.ledger_debit|intcomma}}
+                                    </td>
+                                    {%else%}
+                                    <td>
+
+                                    </td>
+                                    {%endif%}
+
+                                    {% if l.ledger_credit > 0 %}
+                                    <td class="text-right">
+                                        ${{l.ledger_credit|intcomma}}
+                                    </td>
+                                    {%else%}
+                                    <td>
+
+                                    </td>
+                                    {%endif%}
+
+                                    {%endif%}
+                                    {% endfor %}
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </td>
+                    <td>
+                        {{transaction.transaction_status}}
+                    </td>
+                    <td>
+                        {% if request.user.user_type == 2 %}
+                        {% if transaction.transaction_status == "Pending"  %}
+                        <a href="journal/{{transaction.id}}/approve" class="btn btn-primary">Approve</a>
+                        <a href="#journalReject" class="btn btn-danger" data-id={{transaction.id}} id="reject"
+                            rel="jqmodal:open">Reject</a>
+                        {% endif %}
+                        {%endif%}
+                    </td>
+                </tr>
+
+
+                {% endfor %}
+
+
+
+            </tbody>
+        </table>
+
+    </div>
+
+    <ul class="pagination justify-content-center">
+        {% if current_page.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ current_page.previous_page_number }}">Previous</a>
+        </li>
+        {% endif %}
+        {% for page in paginator.page_range %}
+        <li class="page-item {% if page == current_page.number %}active{% endif %}">
+            <a class="page-link" href="?page={{ page }}">{{ page }}</a>
+        </li>
+        {% endfor %}
+        {% if current_page.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ current_page.next_page_number }}">Next</a></li>
+        {% endif %}
+    </ul>
+</div>
+
+
+<form method="POST" action="" id="journalReject" class="jqmodal">
+    {% csrf_token %}
+    {{transaction.transaction.id}}
+    <div class="form-group">
+        <label for="reject">Rejection Reason:</label>
+        {% render_field form.transaction_comment|attr:"required" class="form-control form-control-sm" type="text" %}
+    </div>
+    <button type="submit" class="btn btn-primary">Commit</button>
+
+</form>
+
+
+<script>
+
+    $('#reject').click(function () {
+        var dataId = $(this).data("id");
+        $('#journalReject').attr('action', 'journal/' + dataId + '/reject');
+    });
+
+    $("#date").datepicker({
+        changeMonth: true,
+        changeYear: true,
+    });
+
+    $("#myInput").on("keyup", function () {
+        var value = $(this).val().toLowerCase();
+        $("#myTable tr").filter(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+
+
+</script>
+
+
+{% endblock %}

@@ -1,13 +1,103 @@
 {% extends "accounting/base.html"%}
 
+{% load humanize %}
+{% load widget_tweaks %}
 
 {% block content %}
 
-<div>
-    Account Ledger {{account.account_number}}
+<div class="d-flex">
 
-    <a href="{% url 'accounthome' %}" class="btn btn-primary btn-block">Back</a>
 
-</div>
+    <div class="container mt-5">
 
-{% endblock %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th scope="col">Account Name: {{account.account_name}}</th>
+                    <th scope="col">Account Number: {{account.account_number}}</th>
+                    <th scope="col">Account Inital Balance: $ {{account.account_inital_balance|intcomma}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr></tr>
+                <tr>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Journal Number</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Details</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Debit</th>
+                                <th scope="col">Credit</th>
+                            </tr>
+                        </thead>
+                        <tbody id=" myTable">
+                            {% load account_filters %}
+                            {% for l in ledger  %}
+                            {% if l.transaction.transaction_status == "Approved" %}
+                            <tr>
+                                <td> <a href="{% url 'journaldetail' l.transaction.id %}">
+                                        {{l.transaction.id}}</a></td>
+                                <td>{{l.transaction.transaction_date}}</td>
+                                <td>{{l.transaction.transaction_description}}</td>
+                                <td>{{l.transaction.transaction_type}}</td>
+                                {% if l.ledger_debit > 0 %}
+                                {% if forloop.counter0 == 0 %}
+                                <td class="text-right">
+                                    $ {{l.ledger_debit|intcomma}}
+                                </td>
+                                {%else %}
+                                <td class="text-right">
+                                    {{l.ledger_debit|intcomma}}
+                                </td>
+                                {% endif %}
+                                {%else%}
+                                <td>
+
+                                </td>
+                                {%endif%}
+
+                                {% if l.ledger_credit > 0 %}
+                                {% if forloop.counter0 == 0 %}
+                                <td class="text-right">
+                                    $ {{l.ledger_credit|intcomma}}
+                                </td>
+                                {%else %}
+                                <td class="text-right">
+                                    {{l.ledger_credit|intcomma}}
+                                </td>
+                                {% endif %}
+                                {% else %}
+                                <td>
+
+                                </td>
+                                {% endif %}
+                                {% endif %}
+                            </tr>
+
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </tr>
+            </tbody>
+            <table class="table">
+                <thead>
+                    <tr class="d-flex justify-content-end">
+                        <th scope="col">Account Balance: $ {{account.account_balance|intcomma}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr></tr>
+                </tbody>
+            </table>
+        </table>
+
+        <a href="{% url 'accounthome' %}" class="btn btn-primary btn-block">Back</a>
+
+    </div>
+
+
+
+
+    {% endblock %}

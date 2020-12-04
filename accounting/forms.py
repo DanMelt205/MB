@@ -1,6 +1,7 @@
 from django import forms
-from .models import Account
+from .models import Account, Ledger, Transaction, Document
 from django.contrib import messages
+from django.forms import modelformset_factory, formset_factory
 
 
 class AccountCreationForm(forms.ModelForm):
@@ -50,4 +51,35 @@ class AccountUpdateForm(forms.ModelForm):
                   'account_comment', 'account_status')
         widgets = {
             'account_description': forms.Textarea(attrs={'rows': 5}),
+        }
+
+
+class LedgerCreateForm(forms.ModelForm):
+
+    class Meta:
+        model = Ledger
+        fields = ('ledger_debit', 'ledger_credit',  'account')
+        widgets = {
+            'ledger_debit': forms.NumberInput(attrs={'step': 0.01},),
+            'ledger_credit': forms.NumberInput(attrs={'step': 0.01},),
+        }
+
+
+LedgerCreateFormSet = formset_factory(LedgerCreateForm, extra=2)
+
+
+class TransactionCreateForm(forms.ModelForm):
+
+    class Meta:
+        model = Transaction
+        fields = ('transaction_comment',
+                  'transaction_description', 'transaction_type')
+
+
+class DocumentCreateForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        fields = ('document',)
+        widgets = {
+            'document': forms.ClearableFileInput(attrs={'multiple': True}),
         }

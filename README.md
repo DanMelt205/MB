@@ -23,3 +23,12 @@
 
 
 
+  -Sprint3 - Feature list Journalizing and Ledger Module
+
+    Manager user:
+      [] The ledger page must have filtering and search features.  You need to allow filtering by date or date range, and be able to search by account name or amount;
+        - Not sure of what is meant the ledger is more of a sheet for viewing.
+
+    Accountant user:
+      [] Manager must get notification when journal entry is submitted for approval;
+        - Havent thought out the entire process of this. Could simply email all managers.

@@ -67,55 +67,64 @@ class SignUpView(CreateView):
 
 class LoginView(FormView):
     form_class = LoginForm
-    success_url = '/'
     template_name = 'register/login.html'
 
     def form_valid(self, form):
         request = self.request
         email = form.cleaned_data.get("email")
         password = form.cleaned_data.get("password")
-        u = User.objects.filter(email=email).get()
+        try:
+            u = User.objects.filter(email=email).get()
 
-        if not u.active:
-            print("Deactive end date")
-            now = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-            now_truncated = date(now.year, now.month, now.day)
-            if u.deactive_time_end == now_truncated:
-                print("Changed active user")
-                u.active = True
-                u.save()
-
-        user = authenticate(request, username=email, password=password)
-        if user is not None:
-            login(request, user)
-            u.password_expiration = abs(
-                datetime.today().day - u.date_joined.day)
-            u.save()
-            if u.password_expiration != 3:
-                messages.success(request, "Your password will expire in {} days".format(
-                    abs(u.password_expiration - 3)))
-                messages.success(
-                    request, "You have successfully Logged In")
-        else:
-            if u.active:
-                if request.session.get('count', 0) == 0:
-                    request.session['count'] = 1
-                    messages.error(
-                        request, "Your account will be suspended after {} more attempts.".format(abs(3 - request.session['count'])))
-                else:
-                    request.session['count'] += 1
-                    messages.error(
-                        request, "Your account will be suspended after {} more attempts.".format(abs(3 - request.session['count'])))
-
-                if request.session['count'] == 3:
-                    request.session['count'] = 1
-                    u.active = False
+            if not u.active:
+                print("Deactive end date")
+                now = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+                now_truncated = date(now.year, now.month, now.day)
+                if u.deactive_time_end == now_truncated:
+                    print("Changed active user")
+                    u.active = True
                     u.save()
+
+            user = authenticate(request, username=email, password=password)
+            if user is not None:
+                login(request, user)
+                u.password_expiration = abs(
+                    datetime.today().day - u.date_joined.day)
+                u.save()
+                if (u.password_expiration % 3) != 0:
+                    messages.success(request, "Your password will expire in {} days".format(
+                        (u.password_expiration % 3)))
+                    messages.success(
+                        request, "You have successfully Logged In")
+                    return redirect('accounthome')
+                else:
+                    messages.success(
+                        request, "You have successfully Logged In")
                     messages.error(
-                        request, "Your account has been suspended for 24 hours.")
+                        request, "Password expired!")
+                    return redirect('accounthome')
             else:
-                messages.error(
-                    request, "This account is suspended, Contact your administrator for more information.")
+                if u.active:
+                    if request.session.get('count', 0) == 0:
+                        request.session['count'] = 1
+                        messages.error(
+                            request, "Your account will be suspended after {} more attempts.".format(abs(3 - request.session['count'])))
+                    else:
+                        request.session['count'] += 1
+                        messages.error(
+                            request, "Your account will be suspended after {} more attempts.".format(abs(3 - request.session['count'])))
+
+                    if request.session['count'] == 3:
+                        request.session['count'] = 1
+                        u.active = False
+                        u.save()
+                        messages.error(
+                            request, "Your account has been suspended for 24 hours.")
+                else:
+                    messages.error(
+                        request, "This account is suspended, Contact your administrator for more information.")
+        except:
+            messages.error(request, "This account can not be found")
 
         return super(LoginView, self).form_invalid(form)
 

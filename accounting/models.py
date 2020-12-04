@@ -85,8 +85,6 @@ class Account(models.Model):
     account_credit = models.DecimalField(
         max_digits=10, decimal_places=2, default=0.00)
     account_creation_date = models.DateTimeField(auto_now_add=True)
-    # account_modified_date = models.DateTimeField(auto_now=True)
-    # account_modified_user = models.IntegerField(null=True, blank=True)
     account_statement = models.CharField(
         choices=acccount_statements, max_length=50, null=True)
     account_status = models.CharField(
@@ -110,4 +108,88 @@ class Account(models.Model):
         return str(self.account_number)
 
     class Meta:
-        ordering = ('account_creation_date',)
+        ordering = ('-account_creation_date',)
+
+
+class Transaction(models.Model):
+
+    transaction_statuses = (
+        ("Approved", "Approved"),
+        ("Rejected", "Rejected"),
+        ("Pending", "Pending"),
+    )
+
+    transaction_types = (
+        ("Adjusting", "Adjusting"),
+        ("Regular", "Regular"),
+        ("Reversing", "Reversing"),
+        ("Closing", "Closing"),
+    )
+
+    transaction_status = models.CharField(
+        choices=transaction_statuses, max_length=10, default="Pending"
+    )
+    transaction_date = models.DateTimeField(auto_now_add=True)
+    transaction_description = models.TextField(blank=True)
+    transaction_comment = models.TextField(blank=True)
+    transaction_type = models.CharField(
+        choices=transaction_types, max_length=10, default="Regular"
+    )
+
+    def __str__(self):
+        return str(self.id)
+
+    class Meta:
+        ordering = ('-transaction_date',)
+
+
+class Document(models.Model):
+    document = models.FileField(
+        upload_to='transaction_documents/', blank=True, null=True)
+
+    transaction = models.ForeignKey(
+        Transaction,
+        models.CASCADE,
+        blank=True,
+        null=True,
+    )
+
+    def __str__(self):
+        return str(self.id)
+
+
+class Ledger(models.Model):
+
+    ledger_debit = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0.00
+    )
+    ledger_credit = models.DecimalField(
+        max_digits=10, decimal_places=2, default=0.00
+    )
+
+    transaction = models.ForeignKey(
+        Transaction,
+        models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+
+    account = models.ForeignKey(
+        Account,
+        models.CASCADE,
+        blank=True,
+        null=True,
+    )
+
+    user = models.ForeignKey(
+        User,
+        models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+
+    def __str__(self):
+        return str(self.id)
+
+    class Meta:
+        ordering = ('id',)

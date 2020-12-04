@@ -1,0 +1,121 @@
+{% extends "accounting/base.html"%}
+
+{% load widget_tweaks %}
+{% load humanize %}
+
+{% block content %}
+
+<style>
+    .global-container {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card {
+        width: 1000px;
+    }
+
+    .size-header {
+        font-size: xx-large;
+    }
+
+    .error {
+        color: red;
+    }
+</style>
+
+
+<div class="global-container mt-5">
+    <div class="card login-form">
+        <div class="card-body">
+            <p class="card-title text-center size-header"><strong>Journal Entry {{transaction.id}}</strong></p>
+            <hr>
+            <div class="card-text">
+
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody id=" myTable">
+
+                        <tr>
+                            <td>{{transaction.transaction_date}}</td>
+                            <td>{{transaction.transaction_description}}</td>
+                            <td>
+                                <table class="table ">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Account Name</th>
+                                            <th scope="col">Debit</th>
+                                            <th scope="col">Credit</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for l in ledger %}
+                                        <tr>
+                                            {% if transaction.id == l.transaction.id %}
+                                            {% if l.ledger_credit > 0 %}
+                                            <td style=" padding-left:5em">
+                                                {{l.account}}-{{l.account.account_name}}
+                                            </td>
+                                            {%else%}
+                                            <td>
+                                                {{l.account}}-{{l.account.account_name}}
+                                            </td>
+                                            {%endif%}
+
+                                            {% if l.ledger_debit > 0 %}
+                                            <td class="text-right">
+                                                ${{l.ledger_debit|intcomma}}
+                                            </td>
+                                            {%else%}
+                                            <td>
+
+                                            </td>
+                                            {%endif%}
+
+                                            {% if l.ledger_credit > 0 %}
+                                            <td class="text-right">
+                                                ${{l.ledger_credit|intcomma}}
+                                            </td>
+                                            {%else%}
+                                            <td>
+
+                                            </td>
+                                            {%endif%}
+
+                                            {%endif%}
+                                            {% endfor %}
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </td>
+                        </tr>
+
+
+                    </tbody>
+                </table>
+                {% for d in document %}
+                <a href="{{d.document.url}}" class="btn btn-primary mb-4">View
+                    Associated Document {{forloop.counter}}</a>
+                {% endfor %}
+
+                <a href=" {{request.META.HTTP_REFERER}}" class="btn btn-primary btn-block">Back</a>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+
+{%endblock%}

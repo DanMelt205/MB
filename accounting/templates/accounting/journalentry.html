@@ -1,0 +1,289 @@
+{% extends "accounting/base.html"%}
+
+{% load widget_tweaks %}
+{% load humanize %}
+
+{% block content %}
+
+<style>
+    .global-container {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card {
+        width: 750px;
+    }
+
+    .size-header {
+        font-size: xx-large;
+    }
+
+    .error {
+        color: red;
+    }
+</style>
+
+{% if messages %}
+<div class="row d-flex justify-content-center">
+    <div class=" text-center col-sm-6 col-sm-offset-3">
+        {% for message in messages %}
+        <div {% if message.tags == "error" %} class="alert alert-danger" {% else %}
+            class="alert alert-{{ message.tags }}" {% endif %} role="alert" id="jqmessage">
+            <p>{{ message }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endif %}
+
+<div class="row d-flex justify-content-center" id="unhide" style="display: none;">
+    <div class=" text-center col-sm-6 col-sm-offset-3">
+        <div id="jqmessage" role="alert">
+            <p></p>
+        </div>
+    </div>
+</div>
+
+
+<div class="global-container mt-5">
+    <div class="card login-form">
+        <div class="card-body">
+            <p class="card-title text-center size-header"><strong>Create Journal</strong></p>
+            <hr>
+            <div class="card-text">
+
+
+                <form method="POST" action="" enctype="multipart/form-data" id="myForm">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="descritpion"> Journal Descritpion </label>
+                        {% render_field transactionform.transaction_description class="form-control form-control-sm" type="text" rows="3" %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descritpion"> Journal Type </label>
+                        {% render_field transactionform.transaction_type class="form-control form-control-sm" type="select"%}
+                    </div>
+
+                    {{ formset.management_form }}
+                    {% for form in formset %}
+                    <div class="row form-row">
+
+                        <div class="form-group col">
+                            <label for="account">Account</label>
+                            {% render_field form.account|attr:"required" class="form-control form-control-sm account-select" type="select" %}
+                        </div>
+                        {% if forloop.counter0 == 0 %}
+                        <div class="form-group col">
+                            <label for="debit">Debit</label>
+                            {% render_field form.ledger_debit|attr:"required" class="form-control form-control-sm debit" value=0 type="number" %}
+                        </div>
+                        {% render_field form.ledger_credit class="form-control form-control-sm credit" value=0  type="hidden" %}
+
+                        {% else %}
+                        <div class="form-group col">
+                            <label for="debit">Debit</label>
+                            {% render_field form.ledger_debit class="form-control form-control-sm debit" value=0 type="number" %}
+                        </div>
+
+                        <div class="form-group col">
+                            <label for="credit">Credit</label>
+                            {% render_field form.ledger_credit class="form-control form-control-sm credit" value=0  type="number" %}
+                        </div>
+                        {% endif %}
+
+
+                        {% if forloop.counter0 == 0 %}
+                        <div class="" style="display: none;">
+                            <button class="btn btn-success add-form-row">+</button>
+                        </div>
+                        {% else %}
+                        <div class="">
+                            <button class="mt-4 btn btn-success add-form-row">+</button>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {% endfor %}
+
+                    <div class="form-group">
+                        <label for="descritpion"> Document </label>
+                        {% render_field documentform.document|attr:"multiple" class="form-control form-control-sm" type="file" %}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Create Entry</button>
+                    <input class="btn btn-primary btn-block" type="button" value="Reset" onClick="this.form.reset()" />
+                    <a href="{% url 'journal' %}" class="btn btn-primary btn-block">Back</a>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+
+
+<script type="text/javascript">
+
+    function cloneMore(selector, prefix) {
+        var newElement = $(selector).clone(true);
+        var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
+        newElement.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function () {
+            var name = $(this).attr('name')
+            if (name) {
+                name = name.replace('-' + (total - 1) + '-', '-' + total + '-');
+                var id = 'id_' + name;
+                $(this).attr({ 'name': name, 'id': id }).val('').removeAttr('checked');
+            }
+        });
+        total++;
+        $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+        $(selector).after(newElement);
+        var conditionRow = $('.form-row:not(:last)');
+        conditionRow.find('.btn.add-form-row')
+            .removeClass('btn-success').addClass('btn-danger')
+            .removeClass('add-form-row').addClass('remove-form-row')
+            .html('-');
+        return false;
+    }
+
+
+    function deleteForm(prefix, btn) {
+        var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+        if (total > 1) {
+            btn.closest('.form-row').remove();
+            var forms = $('.form-row');
+            $('#id_' + prefix + '-TOTAL_FORMS').val(forms.length);
+        }
+        return false;
+    }
+
+    $(document).keypress(
+        function (e) {
+            if (e.which == '13') {
+                e.preventDefault();
+            }
+        });
+
+
+    $(document).on('click', '.add-form-row', function (e) {
+        // e.preventDefault();
+        cloneMore('.form-row:last', 'form');
+
+        // $('.account-select').on('change', function () {
+        //     $('.account-select option').prop("disabled", false);
+        //     $(".account-select").not(this).find("option[value=" + $(this).val() + "]").prop('disabled', true);
+        // });
+
+        // $.each($('.debit'), function (i, val) {
+        //     $('#id_form-' + i + '-ledger_debit').on('keyup', function (e) {
+        //         if (e.target.value != 0.0) {
+        //             $('#id_form-' + i + '-ledger_credit').prop('disabled', true);
+        //             $('#id_form-' + i + '-ledger_credit').val(0.00)
+        //         } else {
+        //             $('#id_form-' + i + '-ledger_credit').prop('disabled', false);
+        //         }
+        //     });
+        // });
+        // $.each($('.credit'), function (i, val) {
+        //     $('#id_form-' + i + '-ledger_credit').on('keyup', function (e) {
+        //         if (e.target.value != 0.0) {
+        //             $('#id_form-' + i + '-ledger_debit').prop('disabled', true);
+        //             $('#id_form-' + i + '-ledger_debit').val(0.00)
+        //         } else {
+        //             $('#id_form-' + i + '-ledger_debit').prop('disabled', false);
+        //         }
+        //     });
+        // });
+
+
+        return false;
+    });
+
+    $(document).on('click', '.remove-form-row', function (e) {
+        // e.preventDefault();
+        deleteForm('form', $(this));
+        return false;
+    });
+
+
+    // $('.account-select').on('change', function () {
+    //     $('.account-select option').prop("disabled", false);
+    //     $(".account-select").not(this).find("option[value=" + $(this).val() + "]").prop('disabled', true);
+    // });
+
+    // $.each($('.debit'), function (i, val) {
+    //     $('#id_form-' + i + '-ledger_debit').on('keyup', function (e) {
+    //         if (e.target.value != 0.0) {
+    //             $('#id_form-' + i + '-ledger_credit').prop('disabled', true);
+    //             $('#id_form-' + i + '-ledger_credit').val(0.00)
+    //         } else {
+    //             $('#id_form-' + i + '-ledger_credit').prop('disabled', false);
+    //         }
+    //     });
+    // });
+    // $.each($('.credit'), function (i, val) {
+    //     $('#id_form-' + i + '-ledger_credit').on('keyup', function (e) {
+    //         if (e.target.value != 0.0) {
+    //             $('#id_form-' + i + '-ledger_debit').prop('disabled', true);
+    //             $('#id_form-' + i + '-ledger_debit').val(0.00)
+    //         } else {
+    //             $('#id_form-' + i + '-ledger_debit').prop('disabled', false);
+    //         }
+    //     });
+    // });
+
+
+    $(document).submit(function () {
+
+
+        var total_forms = $('#id_form-TOTAL_FORMS').val();
+        var debit = 0.0;
+        var credit = 0.0;
+
+        $.each($('.debit'), function (i, val) {
+            d = $('#id_form-' + i + '-ledger_debit').val()
+            if (d) {
+                debit = debit + parseFloat(d);
+            } else {
+                $(this).val(0);
+                debit = debit + 0;
+            }
+        });
+        $.each($('.credit'), function (i, val) {
+            c = $('#id_form-' + i + '-ledger_credit').val()
+            $name = 'form-' + i + '-ledger_credit'
+            if (c) {
+                credit = credit + parseFloat(c);
+            } else {
+                $(this).val(0);
+                credit = credit + 0;
+            }
+
+        });
+
+
+
+        console.log('debit: ' + debit)
+        console.log('credit: ' + credit)
+
+        if (debit != credit) {
+            $('#unhide').show();
+            $('#jqmessage').addClass("alert alert-danger").find('p').text('Debit and Credits must be eqaul and can not be zero.');
+            return false
+        }
+
+
+    });
+
+
+</script>
+
+{% endblock %}

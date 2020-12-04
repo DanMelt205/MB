@@ -1,5 +1,5 @@
 from django_filters import FilterSet
-from .models import Account
+from .models import Account, Transaction, Ledger
 
 
 class AccountFilter(FilterSet):
@@ -16,3 +16,22 @@ class EventFilter(FilterSet):
         model = Account.history.model
         fields = ['account_name', 'account_number', 'account_status',
                   'history_user', 'history_date', 'history_id']
+
+
+class TransactionFilter(FilterSet):
+
+    class Meta:
+        model = Transaction
+        fields = {
+            'transaction_status': ['exact'],
+            'transaction_date': ['exact', 'range'],
+        }
+
+
+class LedgerFilter(FilterSet):
+
+    class Meta:
+        model = Transaction
+        fields = {
+            'transaction_date': ['exact', 'range'],
+        }
