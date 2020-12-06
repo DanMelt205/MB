@@ -108,7 +108,7 @@ class Account(models.Model):
         return str(self.account_number)
 
     class Meta:
-        ordering = ('-account_creation_date',)
+        ordering = ('account_creation_date',)
 
 
 class Transaction(models.Model):

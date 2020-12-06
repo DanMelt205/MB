@@ -111,11 +111,15 @@
                     <td>{{account.account_catagory}}</td>
                     <td>{{account.account_subcatagory}}</td>
                     <td>{{account.account_side}}</td>
-                    <td>$ {{account.account_balance|intcomma}}</td>
+                    <td class="text-right">$ {{account.account_balance|intcomma}}</td>
                     <td>{{account.account_status}}</td>
                     <td>
                         <a href="{% url 'accountupdate' account.id %}" class="
                             btn btn-primary">Edit</a>
+                        {% if account_balance <= 0 %}
+                        <a href="{% url 'accountdeactive' account.id %}" class="
+                                                    btn btn-danger">Deactive</a>
+                        {% endif %}
                     </td>
                 </tr>
 

@@ -28,6 +28,7 @@
 </style>
 
 
+
 <div class="global-container mt-5">
     <div class="card login-form">
         <div class="card-body">
@@ -109,7 +110,7 @@
                     Associated Document {{forloop.counter}}</a>
                 {% endfor %}
 
-                <a href=" {{request.META.HTTP_REFERER}}" class="btn btn-primary btn-block">Back</a>
+                <a href="{{request.META.HTTP_REFERER}}" class="btn btn-primary btn-block">Back</a>
 
             </div>
 

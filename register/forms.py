@@ -54,6 +54,7 @@ class SendEmailForm(forms.Form):
     )
     subject = forms.CharField(required=True)
     message = forms.CharField(widget=forms.Textarea)
+    attachment = forms.FileField(required=False)
 
 
 class PasswordResetCustomUserForm(forms.Form):

@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import CreateView, FormView, RedirectView, UpdateView, ListView, DetailView, View
 from django.views.generic.detail import SingleObjectMixin
 from django.urls import reverse_lazy
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from accounting.filter_mixin import ListFilteredMixin
@@ -12,7 +12,7 @@ from accounting.filter_mixin import ListFilteredMixin
 from .forms import AccountCreationForm, AccountUpdateForm, LedgerCreateFormSet, TransactionCreateForm, DocumentCreateForm
 from .models import Account, Ledger, Transaction, Document
 from register.models import User
-from .filters import AccountFilter, EventFilter, TransactionFilter, LedgerFilter
+from .filters import AccountFilter, EventFilter, TransactionFilter, LedgerFilter, AccountSheetFilter
 from register.forms import SendEmailForm
 
 
@@ -70,7 +70,20 @@ class AccountUpdate(UpdateView):
                     request, "Account amount greater than 0, can not be deactived!")
                 return super().form_invalid(form)
 
+        messages.success(
+            request, "Account successfully updated!")
         return super().form_valid(form)
+
+
+class AccountDeactive(View):
+
+    def get(self, *args, **kwargs):
+        account = Account.objects.get(id=self.kwargs['pk'])
+        account.account_status = "Deactive"
+        account.save()
+        messages.success(
+            self.request, "Account was deactived successfully.")
+        return redirect('accounthome')
 
 
 class AccountCreate(SuccessMessageMixin, CreateView):
@@ -206,11 +219,17 @@ class LedgerView(DetailView):
 
     model = Account
     template_name = 'accounting/accountledger.html'
+    # filter_set = AccountSheetFilter
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-        context['ledger'] = Ledger.objects.filter(account=self.kwargs['pk'])
+        ledger_list = Ledger.objects.filter(account=self.kwargs['pk']).select_related(
+            'transaction').order_by('transaction__transaction_date')
+        f = LedgerFilter(
+            self.request.GET, queryset=ledger_list)
+        print(f)
+        context['filter'] = f
         return context
 
 
@@ -220,6 +239,159 @@ class EventLog(ListFilteredMixin, ListView):
     paginate_by = 4
     template_name = 'accounting/eventlog.html'
     filter_set = EventFilter
+
+
+class TrailBalance(ListFilteredMixin, ListView, FormView):
+    model = Ledger
+    template_name = 'accounting/trailbalance.html'
+    queryset = Ledger.objects.all().select_related(
+        'account').select_related('transaction').order_by('account__account_creation_date')
+    filter_set = AccountSheetFilter
+    form_class = SendEmailForm
+    success_url = reverse_lazy('trailbalance')
+
+    def form_valid(self, form):
+
+        request = self.request
+        to_email = form.cleaned_data.get("to_email")
+        subject = form.cleaned_data.get("subject")
+        message = form.cleaned_data.get("message")
+        attachment = request.FILES.getlist('attachment')
+
+        print(attachment)
+
+        try:
+            email = EmailMessage(
+                subject,
+                message,
+                'movethewaters@gmail.com',
+                [to_email],
+            )
+
+            for a in attachment:
+                email.attach(a.name, a.read(), a.content_type)
+
+            res = email.send()
+        except BadHeaderError:
+            messages.error(request, "Email was not sent.")
+            return super().form_invalid(form)
+
+        messages.success(request, "Email was successfully sent.")
+        return super().form_valid(form)
+
+
+class IncomeSheet(ListView, FormView):
+    model = Account
+    context_object_name = 'account'
+    template_name = 'accounting/incomesheet.html'
+
+    form_class = SendEmailForm
+    success_url = reverse_lazy('incomesheet')
+
+    def form_valid(self, form):
+
+        request = self.request
+        to_email = form.cleaned_data.get("to_email")
+        subject = form.cleaned_data.get("subject")
+        message = form.cleaned_data.get("message")
+        attachment = request.FILES.getlist('attachment')
+
+        print(attachment)
+
+        try:
+            email = EmailMessage(
+                subject,
+                message,
+                'movethewaters@gmail.com',
+                [to_email],
+            )
+
+            for a in attachment:
+                email.attach(a.name, a.read(), a.content_type)
+
+            res = email.send()
+        except BadHeaderError:
+            messages.error(request, "Email was not sent.")
+            return super().form_invalid(form)
+
+        messages.success(request, "Email was successfully sent.")
+        return super().form_valid(form)
+
+
+class BalanceSheet(ListView, FormView):
+    model = Account
+    context_object_name = 'account'
+    template_name = 'accounting/balancesheet.html'
+
+    form_class = SendEmailForm
+    success_url = reverse_lazy('balancesheet')
+
+    def form_valid(self, form):
+
+        request = self.request
+        to_email = form.cleaned_data.get("to_email")
+        subject = form.cleaned_data.get("subject")
+        message = form.cleaned_data.get("message")
+        attachment = request.FILES.getlist('attachment')
+
+        print(attachment)
+
+        try:
+            email = EmailMessage(
+                subject,
+                message,
+                'movethewaters@gmail.com',
+                [to_email],
+            )
+
+            for a in attachment:
+                email.attach(a.name, a.read(), a.content_type)
+
+            res = email.send()
+        except BadHeaderError:
+            messages.error(request, "Email was not sent.")
+            return super().form_invalid(form)
+
+        messages.success(request, "Email was successfully sent.")
+        return super().form_valid(form)
+
+
+class RetainedStatement(ListView, FormView):
+    model = Account
+    context_object_name = 'account'
+    template_name = 'accounting/retainedearnings.html'
+
+    form_class = SendEmailForm
+    success_url = reverse_lazy('retainedearnings')
+
+    def form_valid(self, form):
+
+        request = self.request
+        to_email = form.cleaned_data.get("to_email")
+        subject = form.cleaned_data.get("subject")
+        message = form.cleaned_data.get("message")
+        attachment = request.FILES.getlist('attachment')
+
+        print(attachment)
+
+        try:
+            email = EmailMessage(
+                subject,
+                message,
+                'movethewaters@gmail.com',
+                [to_email],
+            )
+
+            for a in attachment:
+                email.attach(a.name, a.read(), a.content_type)
+
+            res = email.send()
+        except BadHeaderError:
+            messages.error(request, "Email was not sent.")
+            return super().form_invalid(form)
+
+        messages.success(request, "Email was successfully sent.")
+        return super().form_valid(form)
 
 
 def index(request):

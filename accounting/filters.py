@@ -1,4 +1,4 @@
-from django_filters import FilterSet
+from django_filters import FilterSet, DateRangeFilter, DateFilter, CharFilter
 from .models import Account, Transaction, Ledger
 
 
@@ -10,7 +10,22 @@ class AccountFilter(FilterSet):
                   'account_subcatagory', 'account_balance']
 
 
+class AccountSheetFilter(FilterSet):
+    date_range = DateRangeFilter(field_name='transaction__transaction_date')
+    start_date = DateFilter(
+        field_name='transaction__transaction_date', lookup_expr='lt')
+    end_date = DateFilter(
+        field_name='transaction__transaction_date', lookup_expr='gt')
+
+    class Meta:
+        model = Ledger
+        fields = ['date_range', 'start_date', 'end_date']
+
+
 class EventFilter(FilterSet):
+
+    history_date = DateRangeFilter(
+        field_name='history_date', lookup_expr='lt')
 
     class Meta:
         model = Account.history.model
@@ -20,18 +35,25 @@ class EventFilter(FilterSet):
 
 class TransactionFilter(FilterSet):
 
+    date_range = DateRangeFilter(field_name='transaction_date')
+    start_date = DateFilter(
+        field_name='transaction_date', lookup_expr='lt')
+    end_date = DateFilter(
+        field_name='transaction_date', lookup_expr='gt')
+
     class Meta:
         model = Transaction
-        fields = {
-            'transaction_status': ['exact'],
-            'transaction_date': ['exact', 'range'],
-        }
+        fields = ['transaction_status', 'date_range', 'start_date', 'end_date']
 
 
 class LedgerFilter(FilterSet):
 
+    date_range = DateRangeFilter(field_name='transaction__transaction_date')
+    start_date = DateFilter(
+        field_name='transaction__transaction_date', lookup_expr='lt')
+    end_date = DateFilter(
+        field_name='transaction__transaction_date', lookup_expr='gt')
+
     class Meta:
-        model = Transaction
-        fields = {
-            'transaction_date': ['exact', 'range'],
-        }
+        model = Ledger
+        fields = ['date_range', 'start_date', 'end_date']

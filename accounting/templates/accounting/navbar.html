@@ -28,9 +28,6 @@
                     Reports
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="#">Balance Sheet</a>
-                    <a class="dropdown-item" href="#">Income Sheet</a>
-                    <a class="dropdown-item" href="#">Trail Balance</a>
                     <a class="dropdown-item" href="{% url 'eventlog' %}">Event Log</a>
                     <a class="dropdown-item" href="{% url 'userprofiles' %}">Users</a>
                 </div>
@@ -68,9 +65,10 @@
                         Reports
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="#">Balance Sheet</a>
-                        <a class="dropdown-item" href="#">Income Sheet</a>
-                        <a class="dropdown-item" href="#">Trail Balance</a>
+                        <a class="dropdown-item" href="{% url 'balancesheet' %}">Balance Sheet</a>
+                        <a class="dropdown-item" href="{% url 'incomesheet' %}">Income Sheet</a>
+                        <a class="dropdown-item" href="{% url 'trailbalance' %}">Trail Balance</a>
+                        <a class="dropdown-item" href="{% url 'retainedearnings' %}">Retained Earnings</a>
                         <a class="dropdown-item" href="{% url 'eventlog' %}">Event Log</a>
                     </div>
                 </li>
@@ -107,9 +105,6 @@
                             Reports
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="#">Balance Sheet</a>
-                            <a class="dropdown-item" href="#">Income Sheet</a>
-                            <a class="dropdown-item" href="#">Trail Balance</a>
                             <a class="dropdown-item" href="{% url 'eventlog' %}">Event Log</a>
                         </div>
                     </li>
