@@ -1,6 +1,7 @@
 
 from django.shortcuts import render, redirect
-from django.views.generic import CreateView, FormView, RedirectView, UpdateView, ListView, DetailView, View
+from django.views.generic import CreateView, FormView, RedirectView,\
+    UpdateView, ListView, DetailView, View
 from django.views.generic.detail import SingleObjectMixin
 from django.urls import reverse_lazy
 from django.core.mail import send_mail, EmailMessage
@@ -9,10 +10,12 @@ from django.contrib.messages.views import SuccessMessageMixin
 from accounting.filter_mixin import ListFilteredMixin
 
 
-from .forms import AccountCreationForm, AccountUpdateForm, LedgerCreateFormSet, TransactionCreateForm, DocumentCreateForm
+from .forms import AccountCreationForm, AccountUpdateForm, LedgerCreateFormSet,\
+    TransactionCreateForm, DocumentCreateForm
 from .models import Account, Ledger, Transaction, Document
 from register.models import User
-from .filters import AccountFilter, EventFilter, TransactionFilter, LedgerFilter, AccountSheetFilter
+from .filters import AccountFilter, EventFilter, TransactionFilter,\
+    LedgerFilter, AccountSheetFilter, IncomeFilter
 from register.forms import SendEmailForm
 
 
@@ -139,23 +142,21 @@ class JournalApprove(View):
         return redirect('journal')
 
 
-class JournalReject(FormView):
-    form_class = TransactionCreateForm
-    success_url = reverse_lazy('journal')
+class JournalReject(View):
 
-    def form_valid(self, form):
-        comment = form.cleaned_data['transaction_comment']
-        transaction = Transaction.objects.get(id=self.kwargs['pk'])
-        transaction.transaction_comment = comment
-        transaction.transaction_status = "Rejected"
-        transaction.save()
-        messages.success(
-            self.request, "Journal entry was rejected successfully.")
-        return super().form_valid(form)
-
-    def form_invalid(self, form):
-        messages.error(self.request, self.error_message)
-        return super().form_invalid(form)
+    def post(self, *args, **kwargs):
+        if(self.request.method == 'POST'):
+            comment = self.request.POST.get('transaction_comment')
+            transaction = Transaction.objects.get(id=self.kwargs['pk'])
+            transaction.transaction_comment = comment
+            transaction.transaction_status = "Rejected"
+            transaction.save()
+            messages.success(
+                self.request, "Journal entry was rejected successfully.")
+            return redirect('journal')
+        else:
+            messages.error(
+                self.request, "Journal entry was not rejected successfully.")
 
 
 class JournalDetailView(DetailView):
@@ -280,11 +281,11 @@ class TrailBalance(ListFilteredMixin, ListView, FormView):
         return super().form_valid(form)
 
 
-class IncomeSheet(ListView, FormView):
+class IncomeSheet(ListFilteredMixin, ListView, FormView):
     model = Account
     context_object_name = 'account'
     template_name = 'accounting/incomesheet.html'
-
+    filter_set = IncomeFilter
     form_class = SendEmailForm
     success_url = reverse_lazy('incomesheet')
 
@@ -318,11 +319,11 @@ class IncomeSheet(ListView, FormView):
         return super().form_valid(form)
 
 
-class BalanceSheet(ListView, FormView):
+class BalanceSheet(ListFilteredMixin, ListView, FormView):
     model = Account
     context_object_name = 'account'
     template_name = 'accounting/balancesheet.html'
-
+    filter_set = IncomeFilter
     form_class = SendEmailForm
     success_url = reverse_lazy('balancesheet')
 
@@ -356,11 +357,11 @@ class BalanceSheet(ListView, FormView):
         return super().form_valid(form)
 
 
-class RetainedStatement(ListView, FormView):
+class RetainedStatement(ListFilteredMixin, ListView, FormView):
     model = Account
     context_object_name = 'account'
     template_name = 'accounting/retainedearnings.html'
-
+    filter_set = IncomeFilter
     form_class = SendEmailForm
     success_url = reverse_lazy('retainedearnings')
 

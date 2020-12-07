@@ -56,6 +56,10 @@ class AccountUpdateForm(forms.ModelForm):
 
 class LedgerCreateForm(forms.ModelForm):
 
+    account = forms.ModelChoiceField(
+        queryset=Account.objects.filter(account_status="Active"),
+    )
+
     class Meta:
         model = Ledger
         fields = ('ledger_debit', 'ledger_credit',  'account')

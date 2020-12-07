@@ -26,6 +26,44 @@
         color: red;
     }
 
+    .total-area {
+        display: flex;
+        flex-direction: row;
+
+    }
+
+    .total-text {
+        margin-left: 0.8rem;
+    }
+
+    .total-display {
+        display: flex;
+        flex-direction: row;
+        padding-left: 25.5rem;
+    }
+
+    p {
+        font-weight: 700;
+
+    }
+
+
+    .p-right {
+        padding-left: 11rem;
+
+    }
+
+    @media only screen and (max-width: 1000px) {
+        .total-display {
+            padding-left: 21.5rem;
+        }
+
+        .p-right {
+            padding-left: 9.5rem;
+        }
+
+    }
+
     @media print {
         #download {
             display: none;
@@ -46,7 +84,7 @@
     <div class=" text-center col-sm-6 col-sm-offset-3">
         {% for message in messages %}
         <div {% if message.tags == "error" %} class="alert alert-danger" {% else %}
-            class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+            class="alert alert-{{ message.tags }}" {% endif %} role="alert" id="jqmessage">
             <p>{{ message }}</p>
         </div>
         {% endfor %}
@@ -99,7 +137,6 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th scope="col">Account Number</th>
                             <th scope="col">Account Name</th>
                             <th scope="col">Debit</th>
                             <th scope="col">Credit</th>
@@ -108,9 +145,8 @@
                     <tbody id=" myTable">
 
                         {% for l in object_list %}
-                        {% ifchanged l.account.account_number %}
+                        {% ifchanged l.account.account_name %}
                         <tr>
-                            <td>{{l.account.account_number}}</td>
                             <td>{{l.account.account_name}}</td>
 
                             {% if l.account.account_side == "Left" %}
@@ -130,17 +166,18 @@
 
                     </tbody>
                 </table>
-                <table class="table">
-                    <thead>
-                        <tr class="d-flex justify-content-end">
-                            <th scope="col">Total Balance:&emsp;&emsp;&emsp;&emsp; $&emsp; <span id="balance"></span>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr></tr>
-                    </tbody>
-                </table>
+                <div class="total-area">
+                    <div class="total-text">
+                        <p class="">Total of debit and credit</p>
+                    </div>
+                    <div class="total-display">
+                        <p class="p-left" style="border-bottom: 0.3rem double #dee2e6;">$&emsp; <span" id="left"></span>
+                        </p>
+                        <p class="p-right" style="border-bottom: 0.3rem double #dee2e6;">$&emsp; <span
+                                id="right"></span></p>
+                    </div>
+                </div>
+
                 </table>
 
 
@@ -181,13 +218,18 @@
     var leftSum = 0
     var rightSum = 0
     $('.left-side').each(function () {
-        leftSum += parseFloat($('.left-side').text().split("$").join("")); // Or this.innerHTML, this.innerText
+        x = $(this).text().replace(/,/g, '')
+        leftSum += parseFloat(x.split("$").join("")); // Or this.innerHTML, this.innerText
     });
     $('.right-side').each(function () {
-        rightSum += Math.abs(parseFloat($(".right-side").text().split("$").join(""))); // Or this.innerHTML, this.innerText
+        y = $(this).text().replace(/,/g, '')
+        rightSum += Math.abs(parseFloat(x.split("$").join(""))); // Or this.innerHTML, this.innerText
     });
 
-    $('#balance').text((leftSum - rightSum).toFixed(2));
+
+    $('#left').text(leftSum.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+    $('#right').text(rightSum.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+
 
     $(".date").datepicker({
         changeMonth: true,

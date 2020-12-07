@@ -1,0 +1,17 @@
+Algorithm Idea:
+
+Every sponsor has a question to rank their challenge in terms of what they feel is appropriate.
+(Maybe a scale of 1-5 or something)
+
+Every student when registering will rate their strength on a number scale of 1-10. This will be used to generate a field (student_strength) which is the average
+strength theyb have with regard to the challenge they choose. This will effect the team in the final stages of the algorithm.
+
+Once a student has completed their registration and is looking for a team, they will have a number that is the student strength divided by the strength of the challenge.
+Meaning that the max strength student in the easiest ranked challnge should have a stat of 10, while the average would be around 4-5 maybe lower.
+This number would be used to compare with the other students looking for a team and match them to others to reach a predefined value.
+
+In general a team strength average will be decided upon (I'm thinking about 12) to start with that can be edited by the admin given the need.
+This team strength will then start a parse of the data (student_strength / challenge_strength) finding the most fitting, closest number to that average and assign teams.
+These teams will hope to have a mix of strong and weak students, or an average base skill depending on the pool of students.
+
+Students would also need to have a flag field to indicate once they have been assigned to a team to prevent duplicate registrations and algorithm issues.

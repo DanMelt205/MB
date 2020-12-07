@@ -10,6 +10,18 @@ class AccountFilter(FilterSet):
                   'account_subcatagory', 'account_balance']
 
 
+class IncomeFilter(FilterSet):
+    date_range = DateRangeFilter(field_name='account_creation_date')
+    start_date = DateFilter(
+        field_name='account_creation_date', lookup_expr='lt')
+    end_date = DateFilter(
+        field_name='account_creation_date', lookup_expr='gt')
+
+    class Meta:
+        model = Account
+        fields = ['date_range', 'start_date', 'end_date']
+
+
 class AccountSheetFilter(FilterSet):
     date_range = DateRangeFilter(field_name='transaction__transaction_date')
     start_date = DateFilter(

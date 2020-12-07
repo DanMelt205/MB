@@ -1,0 +1,394 @@
+{% extends "accounting/base.html"%}
+
+{% load widget_tweaks %}
+{% load humanize %}
+
+{% block content %}
+
+<style>
+    .global-container {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card {
+        width: 1000px;
+    }
+
+    .size-header {
+        font-size: xx-large;
+    }
+
+    .error {
+        color: red;
+    }
+
+    .currentSection {
+        display: flex;
+        justify-content: space-between;
+        padding-left: 5rem;
+        padding-right: 5rem;
+    }
+
+    .totcurrentSection {
+        display: flex;
+        justify-content: space-between;
+    }
+
+
+
+    .expenseSection {
+        display: flex;
+        justify-content: space-between;
+        padding-left: 5rem;
+        padding-right: 5rem;
+    }
+
+    @media print {
+        #download {
+            display: none;
+        }
+
+        #email {
+            display: none;
+        }
+
+        #filter {
+            display: none;
+        }
+    }
+</style>
+
+{% if messages %}
+<div class="row d-flex justify-content-center">
+    <div class=" text-center col-sm-6 col-sm-offset-3">
+        {% for message in messages %}
+        <div {% if message.tags == "error" %} class="alert alert-danger" {% else %}
+            class="alert alert-{{ message.tags }}" {% endif %} role="alert">
+            <p>{{ message }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endif %}
+
+<div class="card w-25 ml-5 mt-3" id="filter">
+    <div id="headingOne" class="card-header bg-white shadow-sm border-0 text-center">
+        <h6 class="mb-0 font-weight-bold">
+            <a href="#" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                aria-controls="collapseOne"
+                class="d-block position-relative text-dark text-uppercase collapsible-link py-2">Balance Sheet
+                Filters</a>
+        </h6>
+    </div>
+    <div id="collapseOne" aria-labelledby="headingOne" data-parent="#accordionExample" class="collapse">
+        <form method="get">
+            <div class="form-group col">
+                <label for="name">Date Range</label>
+                {% render_field filter.form.date_range class="form-control form-control-sm"  type="select" %}
+            </div>
+            <div class="form-group col">
+                <label for="name">Start Date</label>
+                {% render_field filter.form.start_date class="form-control form-control-sm date"  type="text" %}
+            </div>
+            <div class="form-group col">
+                <label for="name">End Date</label>
+                {% render_field filter.form.end_date class="form-control form-control-sm date"  type="text" %}
+            </div>
+            <!-- <div class="d-flex row justify-content-center"> -->
+            <button class="btn btn-primary m-3" type="submit">Filter</button>
+            <a href="{% url 'balancesheet' %}" class="btn btn-primary m-3">Clear Filters</a>
+            <!-- </div> -->
+        </form>
+    </div>
+</div>
+
+
+<div class="global-container mt-5">
+    <div class="card login-form">
+        <div class="card-body">
+            <p class="card-title text-center size-header"><strong>Balance Statement</strong></p>
+            <hr>
+
+            <div class="card-text">
+
+
+                <div style="margin-left: 4rem;">
+                    <h4>Assets</h4>
+
+                    <div style="margin-left: 4rem;">
+                        <h4> Current Assets</h4>
+                        {% for a in account %}
+                        {% if a.account_subcatagory == "Cash" or a.account_subcatagory == "Receivables" or a.account_subcatagory == "Inventories" or a.account_subcatagory == "Prepaid Items" or a.account_subcatagory == "Long-Term Investments" %}
+                        <div class="currentSection">
+                            <h5>{{a.account_name}}</h5>
+                            <div style=" width: 300px;">
+                                <h5 class="currentAssets" style="text-align: right; padding-right: 8rem;">
+                                    {{a.account_balance|intcomma}}</h5>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        <div class="totcurrentSection">
+                            <h4>Total Currnet Assets</h4>
+                            <div style="width:175px; margin-right: 3rem;">
+                                <h5 class="text-right" id="currentAssetTotal"></h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-left: 4rem;">
+                        <h4> Property Plant & Equipment</h4>
+                        {% for a in account %}
+                        {% if a.account_subcatagory == "Land" or a.account_subcatagory == "Building" or a.account_subcatagory == "Equipment" or a.account_subcatagory == "Intangibles" %}
+
+                        <div class="currentSection">
+                            <h5>{{a.account_name}}</h5>
+                            <div style=" width: 300px;">
+                                <h5 class="ppe" style="text-align: right; padding-right: 8rem;">
+                                    {{a.account_balance|intcomma}}</h5>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        <div class="totcurrentSection">
+                            <h4>Property Plant & Equipment,Net</h4>
+                            <div style="width:175px; margin-right: 3rem;">
+                                <h5 class="text-right" id="ppeTotal"></h5>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="totcurrentSection">
+                        <h4>Total Assets</h4>
+                        <div style="width:175px; margin-right: 3rem;">
+                            <h5 class="text-right" id="assetTotal"></h5>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div style="margin-left: 4rem;margin-top: 2rem;">
+                    <h4>Liabilities & Stockholders' Equity</h4>
+
+                    <div style="margin-left: 4rem;">
+                        <h4>Liabilities</h4>
+                        {% for a in account %}
+                        {% if a.account_subcatagory == "Short-Term Payables" or a.account_subcatagory == "Employee Payroll" or a.account_subcatagory == "Sales Tax"%}
+
+                        <div class="currentSection">
+                            <h5>{{a.account_name}}</h5>
+                            <div style=" width: 300px;">
+                                <h5 class="currentLiabilities" style="text-align: right; padding-right: 8rem;">
+                                    {{a.account_balance|intcomma}}</h5>
+                            </div>
+                        </div>
+
+                        {% endif %}
+                        {% endfor %}
+                        <div class="totcurrentSection">
+                            <h4>Total Current Liabilities</h4>
+                            <div style="width:175px; margin-right: 3rem;">
+                                <h5 class="text-right" id="currentLiabilitiesTotal"></h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-left: 4rem; ">
+                        <h4>Unearned Revenue</h4>
+                        {% for a in account %}
+                        {% if a.account_subcatagory == "Deferred Revenues and Long-Term Debt" or a.account_subcatagory == "Long-Term Liabilities" %}
+                        <div class="currentSection">
+                            <h5>{{a.account_name}}</h5>
+                            <div style=" width: 300px;">
+                                <h5 class="unearned" style="text-align: right; padding-right: 8rem;">
+                                    {{a.account_balance|intcomma}}</h5>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                        <div class="totcurrentSection">
+                            <h4>Total Unearned Revenue</h4>
+                            <div style="width:175px; margin-right: 3rem;">
+                                <h5 class="text-right" id="unearnedTotal"></h5>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="totcurrentSection">
+                        <h4>Total Liabilities</h4>
+                        <div style="width:175px; margin-right: 3rem;">
+                            <h5 class="text-right" id="liabilitiesTotal"></h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-left: 4rem;margin-top: 2rem;">
+                    <h4>Stockholders' Equity</h4>
+
+                    <div style="margin-left: 4rem;">
+                        {% for a in account %}
+                        {% if a.account_catagory == "Equity" %}
+                        <div class="currentSection">
+                            <h5>{{a.account_name}}</h5>
+                            <div style=" width: 300px;">
+                                <h5 class="currentEquity" style="text-align: right; padding-right: 8rem;">
+                                    {{a.account_balance|intcomma}}</h5>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+
+                    </div>
+                    <div class="totcurrentSection">
+                        <h4>Total Stockholders' Equity</h4>
+                        <div style="width:175px; margin-right: 3rem;">
+                            <h5 class="text-right" id="equityTotal"></h5>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-left: 4rem; margin-top: 3rem;">
+
+
+                    <div class="totcurrentSection">
+                        <h4>Total Liabilities & Stockholders' Equity</h4>
+                        <div style="width:175px; margin-right: 3rem;">
+                            <h5 class="text-right" id="bothTotal"></h5>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+            <a href="#" onclick="window.print()" class="btn btn-primary  mt-3" id="download">Print
+                Document</a>
+            <a href="#balancesheet" id="email" class="btn btn-primary ml-3 mt-3" rel="jqmodal:open">Send
+                Email</a>
+        </div>
+    </div>
+</div>
+</div>
+
+<form method="POST" action="" id="balancesheet" enctype="multipart/form-data" class="jqmodal">
+    {% csrf_token %}
+    <div class="form-group">
+        {% render_field form.to_email class="form-control form-control-sm" type="select" %}
+    </div>
+    <div class="form-group">
+        {% render_field form.subject class="form-control form-control-sm" type="text" placeholder="Subject" %}
+    </div>
+    <div class="form-group">
+        {% render_field form.attachment class="form-control form-control-sm" type="file" %}
+    </div>
+    <div class="form-group">
+        {% render_field form.message class="form-control form-control-sm" rows="15" placeholder="Message" %}
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Send Email</button>
+
+</form>
+
+<script>
+
+
+    $('.currentAssets:first').prepend("$ &emsp;");
+
+    $('.currentAssets:last').append('<div style="margin-left:3.2rem; border-bottom:1px solid  #dee2e6; width:125px;"></div>')
+    $('.ppe:last').append('<div style="margin-left:3.2rem; border-bottom:1px solid  #dee2e6; width:125px;"></div>')
+    $('.currentLiabilities:last').append('<div style="margin-left:3.2rem; border-bottom:1px solid  #dee2e6; width:125px;"></div>')
+    $('.unearned:last').append('<div style="margin-left:3.2rem; border-bottom:1px solid  #dee2e6; width:125px;"></div>')
+    $('.currentEquity:last').append('<div style="margin-left:3.2rem; border-bottom:1px solid  #dee2e6; width:125px;"></div>')
+
+
+
+    var currentAssetsSum = 0
+    var ppeSum = 0
+    var currentLiabilitiesSum = 0
+    var unearnedSum = 0
+    var currentEquitySum = 0
+
+    // This could all be a function. I am writing it mutliple times, Time is slim at the moment 
+    // Asset Section  
+    $('.currentAssets').each(function () {
+        x = $(this).text().replace(/,/g, '')
+        currentAssetsSum += Math.abs(parseFloat(x.split("$").join(""))); // Or this.innerHTML, this.innerText
+    });
+
+    $('.ppe').each(function () {
+        x = $(this).text().replace(/,/g, '')
+        ppeSum += Math.abs(parseFloat(x.split("$").join("")));// Or this.innerHTML, this.innerText
+    });
+
+
+    $('#currentAssetTotal').text((currentAssetsSum).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+    $('#currentAssetTotal').append('<div style="margin-left:3.2rem; border-bottom:1px solid  #dee2e6; width:125px;"></div>')
+    $('#currentAssetTotal').prepend("$ &emsp;");
+
+    $('#ppeTotal').text((ppeSum).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+    $('#ppeTotal').append('<div style="margin-left:3.2rem; border-bottom:1px solid  #dee2e6; width:125px;"></div>')
+
+    assetTot = currentAssetsSum + ppeSum
+
+    $('#assetTotal').text((assetTot).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+    $('#assetTotal').append('<div style="margin-left:3.2rem; border-bottom:0.3rem double  #dee2e6; width:125px;"></div>')
+
+
+    // Liabilities Section 
+    $('.currentLiabilities').each(function () {
+        x = $(this).text().replace(/,/g, '')
+        currentLiabilitiesSum += Math.abs(parseFloat(x.split("$").join(""))); // Or this.innerHTML, this.innerText
+    });
+
+    $('.unearned').each(function () {
+        x = $(this).text().replace(/,/g, '')
+        unearnedSum += Math.abs(parseFloat(x.split("$").join("")));// Or this.innerHTML, this.innerText
+    });
+
+
+    $('#currentLiabilitiesTotal').text((currentLiabilitiesSum).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+    $('#currentLiabilitiesTotal').append('<div style="margin-left:3.2rem; border-bottom:1px solid  #dee2e6; width:125px;"></div>')
+
+    $('#unearnedTotal').text((ppeSum).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+    $('#unearnedTotal').append('<div style="margin-left:3.2rem; border-bottom:1px solid  #dee2e6; width:125px;"></div>')
+
+    liabilitiesTot = currentLiabilitiesSum + unearnedSum
+
+    $('#liabilitiesTotal').text((liabilitiesTot).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+    $('#liabilitiesTotal').append('<div style="margin-left:3.2rem; border-bottom:1px solid  #dee2e6; width:125px;"></div>')
+
+
+    // Equity Section 
+    $('.currentEquity').each(function () {
+        x = $(this).text().replace(/,/g, '')
+        currentEquitySum += Math.abs(parseFloat(x.split("$").join(""))); // Or this.innerHTML, this.innerText
+    });
+
+
+    $('#equityTotal').text((currentEquitySum).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+    $('#equityTotal').append('<div style="margin-left:3.2rem; border-bottom:1px solid  #dee2e6; width:125px;"></div>')
+
+
+    equityAndLiabilities = liabilitiesTot + currentEquitySum
+
+    $('#bothTotal').text((Math.abs(equityAndLiabilities)).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+    $('#bothTotal').append('<div style="margin-left:3.2rem; border-bottom:0.3rem double #dee2e6; width:125px;"></div>')
+    $('#bothTotal').prepend("$ &emsp;");
+
+
+
+
+    $(".date").datepicker({
+        changeMonth: true,
+        changeYear: true,
+    });
+
+</script>
+
+{% endblock %}

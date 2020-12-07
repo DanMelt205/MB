@@ -14,7 +14,7 @@ class Account(models.Model):
     # Right Liability | Equity | Revenue
 
     account_catagories = (
-        ("Assests", "Assests"),
+        ("Assets", "Assets"),
         ("Liabilities", "Liabilities"),
         ("Equity", "Equity"),
         ("Revenues", "Revenues"),
@@ -22,7 +22,7 @@ class Account(models.Model):
     )
 
     account_subcatagories = (
-        # Assests
+        # Assets
         ("Cash", "Cash"),
         ("Receivables", "Receivables"),
         ("Inventories", "Inventories"),

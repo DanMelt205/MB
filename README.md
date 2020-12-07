@@ -33,3 +33,10 @@
     Accountant user:
       [] Manager must get notification when journal entry is submitted for approval;
         - Havent thought out the entire process of this. Could simply email all managers.
+
+  -Sprint4 – Adjusting entries and financial Reports Feature List
+
+    Manager user:
+      [] Can generate, view, save, email, or print trial balance, income statement, balance sheet, and retained earnings statement for a particular date or a date range.
+        - All is implemented not sure about the retained statement. Making an assumption that it is an equity subcatagory. 
+        - Actual statments need to be formated and designed better.
