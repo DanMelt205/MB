@@ -115,13 +115,17 @@
         var leftSum = 0
         var rightSum = 0
         $('.left-side').each(function () {
-            leftSum += parseFloat($('.left-side').text().split("$").join("")); // Or this.innerHTML, this.innerText
+            x = $(this).text().replace(/,/g, '')
+            leftSum += Math.abs(parseFloat(x.split("$").join(""))); // Or this.innerHTML, this.innerText
         });
         $('.right-side').each(function () {
-            rightSum += Math.abs(parseFloat($(".right-side").text().split("$").join(""))); // Or this.innerHTML, this.innerText
+            x = $(this).text().replace(/,/g, '')
+            rightSum += Math.abs(parseFloat(x.split("$").join(""))); // Or this.innerHTML, this.innerText
         });
+        console.log(leftSum)
+        console.log(rightSum)
         bal = parseFloat($('#initBalance').val())
-        sum = ((leftSum - rightSum) + bal).toFixed(2)
+        sum = ((leftSum - rightSum) + bal).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         $('#balance').text(sum);
     </script>
 

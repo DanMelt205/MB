@@ -22,7 +22,7 @@ from register.forms import SendEmailForm
 class AccountView(ListFilteredMixin, ListView, FormView):
 
     model = Account
-    paginate_by = 25
+    paginate_by = 10
     template_name = "accounting/accounthome.html"
     filter_set = AccountFilter
 

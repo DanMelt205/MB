@@ -40,3 +40,10 @@
       [] Can generate, view, save, email, or print trial balance, income statement, balance sheet, and retained earnings statement for a particular date or a date range.
         - All is implemented not sure about the retained statement. Making an assumption that it is an equity subcatagory. 
         - Actual statments need to be formated and designed better.
+
+  -Added data few issues with design and input
+    [] Number currency with negative number infront.
+      - Possibly could fix but might cause different output than the correct at the moment.
+      - Trail Balance page needs work on the total of debit and of credits section.
+      - Not to mobile friendly in certain areas formating is off.
+       

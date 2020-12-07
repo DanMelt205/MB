@@ -144,7 +144,7 @@
                     <div style="margin-left: 4rem;">
                         <h4> Property Plant & Equipment</h4>
                         {% for a in account %}
-                        {% if a.account_subcatagory == "Land" or a.account_subcatagory == "Building" or a.account_subcatagory == "Equipment" or a.account_subcatagory == "Intangibles" %}
+                        {% if a.account_subcatagory == "Land" or a.account_subcatagory == "Building" or a.account_subcatagory == "Equipment" %}
 
                         <div class="currentSection">
                             <h5>{{a.account_name}}</h5>
@@ -318,20 +318,20 @@
     // Asset Section  
     $('.currentAssets').each(function () {
         x = $(this).text().replace(/,/g, '')
-        currentAssetsSum += Math.abs(parseFloat(x.split("$").join(""))); // Or this.innerHTML, this.innerText
+        currentAssetsSum += parseFloat(x.split("$").join("")); // Or this.innerHTML, this.innerText
     });
 
     $('.ppe').each(function () {
         x = $(this).text().replace(/,/g, '')
-        ppeSum += Math.abs(parseFloat(x.split("$").join("")));// Or this.innerHTML, this.innerText
+        ppeSum += parseFloat(x.split("$").join(""));// Or this.innerHTML, this.innerText
     });
 
 
-    $('#currentAssetTotal').text((currentAssetsSum).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+    $('#currentAssetTotal').text((Math.abs(currentAssetsSum)).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
     $('#currentAssetTotal').append('<div style="margin-left:3.2rem; border-bottom:1px solid  #dee2e6; width:125px;"></div>')
     $('#currentAssetTotal').prepend("$ &emsp;");
 
-    $('#ppeTotal').text((ppeSum).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+    $('#ppeTotal').text((Math.abs(ppeSum)).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
     $('#ppeTotal').append('<div style="margin-left:3.2rem; border-bottom:1px solid  #dee2e6; width:125px;"></div>')
 
     assetTot = currentAssetsSum + ppeSum
@@ -348,19 +348,22 @@
 
     $('.unearned').each(function () {
         x = $(this).text().replace(/,/g, '')
-        unearnedSum += Math.abs(parseFloat(x.split("$").join("")));// Or this.innerHTML, this.innerText
+        unearnedSum += parseFloat(x.split("$").join(""));// Or this.innerHTML, this.innerText
     });
 
 
-    $('#currentLiabilitiesTotal').text((currentLiabilitiesSum).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+    $('#currentLiabilitiesTotal').text((Math.abs(currentLiabilitiesSum)).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
     $('#currentLiabilitiesTotal').append('<div style="margin-left:3.2rem; border-bottom:1px solid  #dee2e6; width:125px;"></div>')
 
-    $('#unearnedTotal').text((ppeSum).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+    $('#unearnedTotal').text((Math.abs(unearnedSum)).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
     $('#unearnedTotal').append('<div style="margin-left:3.2rem; border-bottom:1px solid  #dee2e6; width:125px;"></div>')
 
-    liabilitiesTot = currentLiabilitiesSum + unearnedSum
+    liabilitiesTot = Math.abs(currentLiabilitiesSum) + Math.abs(unearnedSum)
 
-    $('#liabilitiesTotal').text((liabilitiesTot).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+    console.log(liabilitiesTot)
+    console.log(currentLiabilitiesSum)
+    console.log(unearnedSum)
+    $('#liabilitiesTotal').text((Math.abs(liabilitiesTot)).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
     $('#liabilitiesTotal').append('<div style="margin-left:3.2rem; border-bottom:1px solid  #dee2e6; width:125px;"></div>')
 
 

@@ -37,7 +37,7 @@ class AccountCreationForm(forms.ModelForm):
     def accountSide(self):
         catagory = self.cleaned_data.get("account_catagory")
 
-        if catagory == "Assests" or catagory == "Expense":
+        if catagory == "Assets" or catagory == "Expenses":
             return "Left"
         else:
             return "Right"
@@ -57,7 +57,8 @@ class AccountUpdateForm(forms.ModelForm):
 class LedgerCreateForm(forms.ModelForm):
 
     account = forms.ModelChoiceField(
-        queryset=Account.objects.filter(account_status="Active"),
+        queryset=Account.objects.filter(
+            account_status="Active").all(),
     )
 
     class Meta:

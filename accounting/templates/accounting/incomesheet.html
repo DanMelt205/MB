@@ -120,7 +120,7 @@
                 <div style="margin-left: 4rem;">
                     <h4>Revenues</h4>
                     {% for a in account %}
-                    {% if account_catagory == "Revenues" %}
+                    {% if a.account_catagory == "Revenues" %}
                     <div class="revSection">
                         <h5>{{a.account_name}}</h5>
                         <div style=" width: 175px;">
@@ -142,7 +142,7 @@
                 <div style="margin-left: 4rem; margin-top: 3rem;">
                     <h4>Expenses</h4>
                     {% for a in account %}
-                    {% if account_catagory == "Expenses" %}
+                    {% if a.account_catagory == "Expenses" %}
                     <div class="expenseSection">
                         <h5>{{a.account_name}}</h5>
                         <div style=" width: 175px;">

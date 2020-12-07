@@ -15,7 +15,7 @@
     }
 
     .card {
-        width: 1000px;
+        width: 1050px;
     }
 
     .size-header {
@@ -29,7 +29,6 @@
     .total-area {
         display: flex;
         flex-direction: row;
-
     }
 
     .total-text {
@@ -168,7 +167,7 @@
                 </table>
                 <div class="total-area">
                     <div class="total-text">
-                        <p class="">Total of debit and credit</p>
+                        <p class="">Total of debit and of credit</p>
                     </div>
                     <div class="total-display">
                         <p class="p-left" style="border-bottom: 0.3rem double #dee2e6;">$&emsp; <span" id="left"></span>
@@ -178,7 +177,7 @@
                     </div>
                 </div>
 
-                </table>
+
 
 
 
@@ -223,9 +222,11 @@
     });
     $('.right-side').each(function () {
         y = $(this).text().replace(/,/g, '')
-        rightSum += Math.abs(parseFloat(x.split("$").join(""))); // Or this.innerHTML, this.innerText
+        rightSum += Math.abs(parseFloat(y.split("$").join(""))); // Or this.innerHTML, this.innerText
     });
 
+    console.log(leftSum)
+    console.log(rightSum)
 
     $('#left').text(leftSum.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
     $('#right').text(rightSum.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));

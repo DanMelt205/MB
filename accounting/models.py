@@ -48,7 +48,7 @@ class Account(models.Model):
         ("Selling Expenses", "Selling Expenses"),
         ("General and Administrative Expenses",
          "General and Administrative Expenses"),
-        ("Othe Expenses", "Othe Expenses"),
+        ("Other Expenses", "Other Expenses"),
     )
 
     acccount_statements = (
@@ -105,7 +105,7 @@ class Account(models.Model):
     )
 
     def __str__(self):
-        return str(self.account_number)
+        return str(self.account_name)
 
     class Meta:
         ordering = ('account_creation_date',)

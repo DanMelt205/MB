@@ -106,33 +106,26 @@
                                     {% if transaction.id == l.transaction.id %}
                                     {% if l.ledger_credit > 0 %}
                                     <td style=" padding-left:5em">
-                                        {{l.account}}-{{l.account.account_name}}
+                                        {{l.account.account_number}}-{{l.account.account_name}}
                                     </td>
                                     {%else%}
                                     <td>
-                                        {{l.account}}-{{l.account.account_name}}
+                                        {{l.account.account_number}}-{{l.account.account_name}}
                                     </td>
                                     {%endif%}
 
                                     {% if l.ledger_debit > 0 %}
                                     <td class="text-right">
-                                        ${{l.ledger_debit|intcomma}}
+                                        $&emsp;{{l.ledger_debit|intcomma}}
                                     </td>
+                                    <td></td>
                                     {%else%}
-                                    <td>
-
-                                    </td>
-                                    {%endif%}
-
-                                    {% if l.ledger_credit > 0 %}
+                                    <td></td>
                                     <td class="text-right">
-                                        ${{l.ledger_credit|intcomma}}
-                                    </td>
-                                    {%else%}
-                                    <td>
-
+                                        $&emsp;{{l.ledger_credit|intcomma}}
                                     </td>
                                     {%endif%}
+
 
                                     {%endif%}
                                     {% endfor %}

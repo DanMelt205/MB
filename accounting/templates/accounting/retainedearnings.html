@@ -109,7 +109,7 @@
 
 {% for a in account %}
 {% if a.account_catagory == "Revenues" %}
-<input class="revenues" value={{a.account_balance}} hidden />
+<input class="revenues" id="revNum" value={{a.account_balance}} hidden />
 {% endif %}
 {% endfor %}
 
@@ -209,29 +209,28 @@
 
 
     var expenseSum = 0
-    var revenueSum = 0
+    var revenueSum = parseFloat($('#revNum').val())
     var retainedSum = 0
     var dividendsSum = 0
 
     $('.expense').each(function () {
-        expenseSum += Math.abs(parseFloat($(this).val())); // Or this.innerHTML, this.innerText
+        expenseSum += parseFloat($(this).val()); // Or this.innerHTML, this.innerText
     });
 
-    $('.revenue').each(function () {
-        revenueSum += Math.abs(parseFloat($(this).val())); // Or this.innerHTML, this.innerText
-    });
+    // $('.revenue').each(function () {
+    //     revenueSum += parseFloat($(this).val()); // Or this.innerHTML, this.innerText
+    // });
 
     $('.retained').each(function () {
-        retainedSum += Math.abs(parseFloat($(this).val())); // Or this.innerHTML, this.innerText
+        retainedSum += parseFloat($(this).val()); // Or this.innerHTML, this.innerText
     });
 
     $('.dividends').each(function () {
-        dividendsSum += Math.abs(parseFloat($(this).val())); // Or this.innerHTML, this.innerText
+        dividendsSum += parseFloat($(this).val()); // Or this.innerHTML, this.innerText
     });
 
-    netIncome = expenseSum + revenueSum
-    console.log(netIncome)
-    console.log(retainedSum)
+    netIncome = Math.abs(revenueSum) - Math.abs(expenseSum)
+
 
     $('#begRetained').text((retainedSum).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
     $('#begRetained').prepend("$ &emsp;")
@@ -239,7 +238,7 @@
     $('#dividend').text((dividendsSum).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
     $('#dividend').append('<div style="margin-left:3.2rem; border-bottom:1px solid  #dee2e6; width:125px;"></div>')
 
-    endRetain = retainedSum - revenueSum - dividendsSum
+    endRetain = retainedSum - netIncome - dividendsSum
     $('#endRetained').text((Math.abs(endRetain)).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
     $('#endRetained').append('<div style="margin-left:3.2rem; border-bottom:0.3rem double #dee2e6; width:125px;"></div>')
     $('#endRetained').prepend("$ &emsp;");
