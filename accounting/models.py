@@ -40,6 +40,7 @@ class Account(models.Model):
          "Deferred Revenues and Long-Term Debt"),
         ("Long-Term Liabilities", "Long-Term Liabilities"),
         # No Subcatagory Equity
+        ("Retained Earnings", "Retained Earnings"),
         # Revenue
         ("Operating Revenues", "Operating Revenues"),
         ("Other Revenues", "Other Revenues"),

@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate, login, get_user_model
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.hashers import check_password
 from django.contrib import messages
-from django.core.mail import send_mail
+from django.core.mail import send_mail, BadHeaderError
 from django.shortcuts import get_object_or_404
 from django.utils.http import urlsafe_base64_decode
 from .models import User
@@ -161,7 +161,7 @@ class UserProfileView(ListView, FormView):
             send_mail(
                 subject,
                 message,
-                'movethewaters@gmail.com',
+                'donotreplymbalancer@gmail.com',
                 [to_email],
                 fail_silently=False,
             )

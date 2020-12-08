@@ -4,7 +4,7 @@ from django.views.generic import CreateView, FormView, RedirectView,\
     UpdateView, ListView, DetailView, View
 from django.views.generic.detail import SingleObjectMixin
 from django.urls import reverse_lazy
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import send_mail, EmailMessage, BadHeaderError
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from accounting.filter_mixin import ListFilteredMixin
@@ -40,7 +40,7 @@ class AccountView(ListFilteredMixin, ListView, FormView):
             send_mail(
                 subject,
                 message,
-                'movethewaters@gmail.com',
+                'donotreplymbalancer@gmail.com',
                 [to_email],
                 fail_silently=False,
             )
@@ -265,7 +265,7 @@ class TrailBalance(ListFilteredMixin, ListView, FormView):
             email = EmailMessage(
                 subject,
                 message,
-                'movethewaters@gmail.com',
+                'donotreplymbalancer@gmail.com',
                 [to_email],
             )
 
@@ -303,7 +303,7 @@ class IncomeSheet(ListFilteredMixin, ListView, FormView):
             email = EmailMessage(
                 subject,
                 message,
-                'movethewaters@gmail.com',
+                'donotreplymbalancer@gmail.com',
                 [to_email],
             )
 
@@ -341,7 +341,7 @@ class BalanceSheet(ListFilteredMixin, ListView, FormView):
             email = EmailMessage(
                 subject,
                 message,
-                'movethewaters@gmail.com',
+                'donotreplymbalancer@gmail.com',
                 [to_email],
             )
 
@@ -379,7 +379,7 @@ class RetainedStatement(ListFilteredMixin, ListView, FormView):
             email = EmailMessage(
                 subject,
                 message,
-                'movethewaters@gmail.com',
+                'donotreplymbalancer@gmail.com',
                 [to_email],
             )
 
@@ -396,12 +396,16 @@ class RetainedStatement(ListFilteredMixin, ListView, FormView):
 
 
 def index(request):
-    return render(request, 'accounting/base.html')
+    account = Account.objects.all()
+    context = {
+        'account': account
+    }
+    return render(request, 'accounting/dashboard.html', context)
+
+
+def landingpage(request):
+    return render(request, 'accounting/moneybalancer.html')
 
 
 def faqs(request):
     return render(request, 'accounting/faqs.html')
-
-
-def eventlog(request):
-    return render(request, 'accounting/eventlog.html')

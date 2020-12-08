@@ -2,7 +2,8 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.index, name="home"),
+    path('dashboard', views.index, name="home"),
+    path('', views.landingpage, name="notlogged"),
     path('faqs', views.faqs, name="faqs"),
 
     path('account', views.AccountView.as_view(), name="accounthome"),
@@ -47,6 +48,9 @@ urlpatterns = [
 
     path('retainedearnings',
          views.RetainedStatement.as_view(), name="retainedearnings"),
+
+    #     path('',
+    #          views.DashBoardView.as_view(), name="home"),
 
     # path('account/<int:id>/deactive', views.deactive, name="accountdeactive")
 ]

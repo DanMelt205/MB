@@ -1,9 +1,190 @@
 {% extends "accounting/base.html"%}
 
-
+{% block title %} FAQS {% endblock %}
 
 {% block content %}
 
-<h1>Faqs</h1>
+<style>
+    .collapsible-link::before {
+        content: '';
+        width: 14px;
+        height: 2px;
+        background: #333;
+        position: absolute;
+        top: calc(50% - 1px);
+        right: 1rem;
+        display: block;
+        transition: all 0.3s;
+    }
 
-{% endblock %}
+    /* Vertical line */
+    .collapsible-link::after {
+        content: '';
+        width: 2px;
+        height: 14px;
+        background: #333;
+        position: absolute;
+        top: calc(50% - 7px);
+        right: calc(1rem + 6px);
+        display: block;
+        transition: all 0.3s;
+    }
+
+    .collapsible-link[aria-expanded='true']::after {
+        transform: rotate(90deg) translateX(-1px);
+    }
+
+    .collapsible-link[aria-expanded='true']::before {
+        transform: rotate(180deg);
+    }
+</style>
+
+
+<div class="container text-center p-5">
+    <h1>Frequently asked questions</h1>
+
+    <div class="row">
+        <div class="col-lg-9 mx-auto">
+            <!-- Accordion -->
+            <div id="accordionExample" class="accordion shadow">
+
+                <!-- Accordion item 1 -->
+                <div class="card">
+                    <div id="headingOne" class="card-header bg-white shadow-sm border-0">
+                        <h6 class="mb-0 font-weight-bold">
+                            <a href="#" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                                aria-controls="collapseOne"
+                                class="d-block position-relative text-dark text-uppercase collapsible-link py-2">Add
+                                account</a>
+                        </h6>
+                    </div>
+                    <div id="collapseOne" aria-labelledby="headingOne" data-parent="#accordionExample"
+                        class="collapse show">
+                        <div class="card-body p-5">
+                            <p class="font-weight-light m-0">To add an account; Go to the Accounts page loccated on the
+                                navagation bar at the top. At the top of the page click the Add Account button. Fill the
+                                feild out fully to add an account. It will not be shown until it is approved.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion item 2 -->
+                <div class="card">
+                    <div id="headingTwo" class="card-header bg-white shadow-sm border-0">
+                        <h6 class="mb-0 font-weight-bold">
+                            <a href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false"
+                                aria-controls="collapseTwo"
+                                class="d-block position-relative collapsed text-dark text-uppercase collapsible-link py-2">Tool
+                                Tips</a>
+                        </h6>
+                    </div>
+                    <div id="collapseTwo" aria-labelledby="headingTwo" data-parent="#accordionExample" class="collapse">
+                        <div class="card-body p-5">
+                            <p class="font-weight-light m-0">If you are unsure of what the button function, hover over
+                                button
+                                and read tool tip.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accordion item 3 -->
+                <div class="card">
+                    <div id="headingThree" class="card-header bg-white shadow-sm border-0">
+                        <h6 class="mb-0 font-weight-bold">
+                            <a href="#" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false"
+                                aria-controls="collapseThree"
+                                class="d-block position-relative collapsed text-dark text-uppercase collapsible-link py-2">Event
+                                Log</a>
+                        </h6>
+                    </div>
+                    <div id="collapseThree" aria-labelledby="headingThree" data-parent="#accordionExample"
+                        class="collapse">
+                        <div class="card-body p-5">
+                            <p class="font-weight-light m-0">The event log is a table of all the changes to the accounts
+                                and the user who made changes.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div id="headingFour" class="card-header bg-white shadow-sm border-0">
+                        <h6 class="mb-0 font-weight-bold">
+                            <a href="#" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false"
+                                aria-controls="collapseFour"
+                                class="d-block position-relative collapsed text-dark text-uppercase collapsible-link py-2">Search
+                                and filters</a>
+                        </h6>
+                    </div>
+                    <div id="collapseFour" aria-labelledby="headingFour" data-parent="#accordionExample"
+                        class="collapse">
+                        <div class="card-body p-5">
+                            <p class="font-weight-light m-0">All searchs and filters can be completed by using the
+                                search and filter features on the pages.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div id="headingFive" class="card-header bg-white shadow-sm border-0">
+                        <h6 class="mb-0 font-weight-bold">
+                            <a href="#" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false"
+                                aria-controls="collapseFive"
+                                class="d-block position-relative collapsed text-dark text-uppercase collapsible-link py-2">Ledger</a>
+                        </h6>
+                    </div>
+                    <div id="collapseFive" aria-labelledby="headingFive" data-parent="#accordionExample"
+                        class="collapse">
+                        <div class="card-body p-5">
+                            <p class="font-weight-light m-0">The ledger can be obtained by clicking the account name on
+                                the accounts page located at the top of the page.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div id="headingSix" class="card-header bg-white shadow-sm border-0">
+                        <h6 class="mb-0 font-weight-bold">
+                            <a href="#" data-toggle="collapse" data-target="#collapseSix" aria-expanded="false"
+                                aria-controls="collapseSix"
+                                class="d-block position-relative collapsed text-dark text-uppercase collapsible-link py-2">Forgot
+                                Password</a>
+                        </h6>
+                    </div>
+                    <div id="collapseSix" aria-labelledby="headingSix" data-parent="#accordionExample" class="collapse">
+                        <div class="card-body p-5">
+                            <p class="font-weight-light m-0">
+                                If you forgot password, choose the option forgot password and after entering the
+                                sercurity
+                                question
+                                the sytem will prompt you to enter a nwe password.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div id="headingSeven" class="card-header bg-white shadow-sm border-0">
+                        <h6 class="mb-0 font-weight-bold">
+                            <a href="#" data-toggle="collapse" data-target="#collapseSeven" aria-expanded="false"
+                                aria-controls="collapseSeven"
+                                class="d-block position-relative collapsed text-dark text-uppercase collapsible-link py-2">Password
+                                expiration</a>
+                        </h6>
+                    </div>
+                    <div id="collapseSeven" aria-labelledby="headingSeven" data-parent="#accordionExample"
+                        class="collapse">
+                        <div class="card-body p-5">
+                            <p class="font-weight-light m-0">Password that are about to expire will be prompted three
+                                days
+                                prior.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {% endblock %}

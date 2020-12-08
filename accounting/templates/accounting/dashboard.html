@@ -1,0 +1,356 @@
+{% extends "accounting/base.html"%}
+
+{% block title %} Dashboard {% endblock %}
+
+{% block content %}
+
+{% for a in account %}
+{% if a.account_catagory == "Assets" %}
+<input class="assets" value={{a.account_balance}} hidden />
+{% endif %}
+
+{% if a.account_catagory == "Liabilities" %}
+<input class="liabilities" value={{a.account_balance}} hidden />
+{% endif %}
+
+{% if a.account_catagory == "Revenues" %}
+<input class="revenues" value={{a.account_balance}} hidden />
+{% endif %}
+
+{% if a.account_catagory == "Expenses" %}
+<input class="expenses" value={{a.account_balance}} hidden />
+{% endif %}
+
+{% if a.account_catagory == "Equity" %}
+<input class="equity" value={{a.account_balance}} hidden />
+{% endif %}
+
+
+{% if a.account_subcatagory == "Inventories" %}
+<input class="inventories" value={{a.account_balance}} hidden />
+{% endif %}
+
+{% endfor %}
+
+
+<div class="container-fluid">
+    <div class="p-5">
+        <div class="row m-1">
+
+            <div class="card col" id="cR">
+                <div class="card-body">
+                    <h5 class="card-title">Current Ratio = Current Assets / Current Liabilities</h5>
+                    <p>Current Ratio: <span id="currentRatio"></span></p>
+                </div>
+            </div>
+            <div class="card col" id="qR">
+                <div class="card-body">
+                    <h5 class="card-title">Quick Ratio = (Current Assets – Inventory) /Current Liabilities</h5>
+                    <p>Quick Ratio: <span id="quickRatio"></span></p>
+                </div>
+            </div>
+            <div class="card col" id="dR">
+                <div class="card-body">
+                    <h5 class="card-title">Debt Ratio = Total Liabilities / Total Assets</h5>
+                    <p>Debit Ratio: <span id="debitRatio"></span></p>
+                </div>
+            </div>
+        </div>
+        <div class="row m-1">
+            <div class="card col" id="rA">
+                <div class="card-body">
+                    <h5 class="card-title">Return on Assets(ROA) = Net Income / Total Assets</h5>
+                    <p>Return on Assets: <span id="roa"></span></p>
+                </div>
+            </div>
+            <div class="card col" id="rE">
+                <div class="card-body">
+                    <h5 class="card-title">Return on Equity(ROE) = Net Income / Stockholder Equity</h5>
+                    <p>Return on Equity: <span id="roe"></span></p>
+                </div>
+            </div>
+            <div class="card col" id="tA">
+                <div class="card-body">
+                    <h5 class="card-title">Total Asset Turnover = Sales / Total Assets</h5>
+                    <p>Total Asset Turnover: <span id="totalAssets"></span></p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row d-flex justify-content-center">
+        <div style="width: 800px; height: 700px;">
+            <canvas id="myChart" width="2" height="1"></canvas>
+        </div>
+
+        <div style="width: 800px; height: 700px;">
+            <canvas id="myNext" width="2" height="1"></canvas>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    // Current Ratio = Current Assets / Current Liabilities
+    // Quick or Acid - test Ratio – (Current Assets – Inventory) /Current Liabilities
+    // Debt Ratio = Total Liabilities / Total Assets
+    // Return on Equity(ROE) = Net Income / Stockholder Equity
+    // Return on Assets(ROA) = Net Income / Total Assets
+    // Total Asset Turnover = Sales / Total Assets
+
+    var assetSum = 0
+    var liabilitiesSum = 0
+    var inventoriesSum = 0
+    var revenueSum = 0
+    var expenseSum = 0
+    var equitySum = 0
+
+    var assetCount = 0
+    var liabilitiesCount = 0
+    var inventoriesCount = 0
+
+    $('.assets').each(function () {
+        assetCount += 1
+        assetSum += parseFloat($(this).val()); // Or this.innerHTML, this.innerText
+    });
+
+    $('.liabilities').each(function () {
+        liabilitiesCount += 1
+        liabilitiesSum += parseFloat($(this).val()); // Or this.innerHTML, this.innerText
+    });
+
+    $('.inventories').each(function () {
+        inventoriesCount += 1
+        inventoriesSum += parseFloat($(this).val()); // Or this.innerHTML, this.innerText
+    });
+    $('.revenues').each(function () {
+        revenueSum += parseFloat($(this).val()); // Or this.innerHTML, this.innerText
+    });
+    $('.expenses').each(function () {
+        expenseSum += parseFloat($(this).val()); // Or this.innerHTML, this.innerText
+    });
+    $('.equity').each(function () {
+        equitySum += parseFloat($(this).val()); // Or this.innerHTML, this.innerText
+    });
+
+    currentRatio = assetCount / liabilitiesCount;
+    quickRatio = (assetCount - inventoriesCount) / liabilitiesCount;
+    debitRatio = Math.abs(liabilitiesSum) / Math.abs(assetSum);
+    roa = Math.abs(revenueSum - expenseSum) / Math.abs(assetSum);
+    roe = Math.abs(revenueSum - expenseSum) / Math.abs(equitySum);
+    totalAssets = Math.abs(revenueSum) / Math.abs(assetSum)
+
+    // $('#currentRatio').text((currentRatio).toFixed(2));
+    // $('#quickRatio').text((quickRatio).toFixed(2));
+    // $('#debitRatio').text((debitRatio).toFixed(2));
+    // $('#roa').text((roa).toFixed(2));
+    // $('#roe').text((roe).toFixed(2));
+    // $('#totalAssets').text((totalAssets).toFixed(2));
+
+    if (currentRatio >= 2) {
+        $('#currentRatio').text((currentRatio).toFixed(2));
+        $('#cR').css({
+            'border-width': '2px',
+            'border-color': '#5cb85c'
+        });
+    } else if (currentRatio >= 1) {
+        $('#currentRatio').text((currentRatio).toFixed(2));
+        $('#cR').css({
+            'border-width': '2px',
+            'border-color': '#f0ad4e'
+        });
+    } else {
+        $('#currentRatio').text((currentRatio).toFixed(2));
+        $('#cR').css({
+            'border-width': '2px',
+            'border-color': '#df4759'
+        });
+    }
+
+
+    if (quickRatio >= 2) {
+        $('#quickRatio').text((quickRatio).toFixed(2));
+        $('#qR').css({
+            'border-width': '2px',
+            'border-color': '#5cb85c'
+        });
+    } else if (quickRatio >= 1) {
+        $('#quickRatio').text((quickRatio).toFixed(2));
+        $('#qR').css({
+            'border-width': '2px',
+            'border-color': '#f0ad4e'
+        });
+    } else {
+        $('#quickRatio').text((quickRatio).toFixed(2));
+        $('#qR').css({
+            'border-width': '2px',
+            'border-color': '#df4759'
+        });
+    }
+
+
+    if (debitRatio <= 0.3) {
+        $('#debitRatio').text((debitRatio).toFixed(2));
+        $('#dR').css({
+            'border-width': '2px',
+            'border-color': '#5cb85c'
+        });
+    } else if (debitRatio <= 0.6) {
+        $('#debitRatio').text((debitRatio).toFixed(2));
+        $('#dR').css({
+            'border-width': '2px',
+            'border-color': '#f0ad4e'
+        });
+    } else {
+        $('#debitRatio').text((debitRatio).toFixed(2));
+        $('#dR').css({
+            'border-width': '2px',
+            'border-color': '#df4759'
+        });
+    }
+
+    if (roa >= 0.5) {
+        $('#roa').text((roa).toFixed(2));
+        $('#rA').css({
+            'border-width': '2px',
+            'border-color': '#5cb85c'
+        });
+    } else if (roa >= 0.25) {
+        $('#roa').text((roa).toFixed(2));
+        $('#rA').css({
+            'border-width': '2px',
+            'border-color': '#f0ad4e'
+        });
+    } else {
+        $('#roa').text((roa).toFixed(2));
+        $('#rA').css({
+            'border-width': '2px',
+            'border-color': '#df4759'
+        });
+    }
+
+    if (roe >= 0.18) {
+        $('#roe').text((roe).toFixed(2));
+        $('#rE').css({
+            'border-width': '2px',
+            'border-color': '#5cb85c'
+        });
+    } else if (roe >= 0.1) {
+        $('#roe').text((roe).toFixed(2));
+        $('#rE').css({
+            'border-width': '2px',
+            'border-color': '#f0ad4e'
+        });
+    } else {
+        $('#roe').text((roe).toFixed(2));
+        $('#rE').css({
+            'border-width': '2px',
+            'border-color': '#df4759'
+        });
+    }
+
+    if (totalAssets >= 0.5) {
+        $('#totalAssets').text((totalAssets).toFixed(2));
+        $('#tA').css({
+            'border-width': '2px',
+            'border-color': '#5cb85c'
+        });
+    } else if (totalAssets >= 0.25) {
+        $('#totalAssets').text((totalAssets).toFixed(2));
+        $('#tA').css({
+            'border-width': '2px',
+            'border-color': '#f0ad4e'
+        });
+    } else {
+        $('#totalAssets').text((totalAssets).toFixed(2));
+        $('#tA').css({
+            'border-width': '2px',
+            'border-color': '#df4759'
+        });
+    }
+    var dynamicColors = function () {
+        var r = Math.floor(Math.random() * 255);
+        var g = Math.floor(Math.random() * 255);
+        var b = Math.floor(Math.random() * 255);
+        return "rgb(" + r + "," + g + "," + b + ")";
+    };
+    var myChartColors = []
+    for (var i = 0; i < 5; i++) {
+        myChartColors.push(dynamicColors());
+    }
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ["Assets", "Liabilities", "Equity", "Revenues", "Expenses"],
+            datasets: [{
+                data: [assetSum, liabilitiesSum, revenueSum, expenseSum, equitySum,],
+                backgroundColor: myChartColors,
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+
+    var data = [];
+    data.push({% for a in account %}'{{ a.account_name }}', {% endfor %});
+    var coloR = [];
+
+
+    for (var i in data) {
+        coloR.push(dynamicColors());
+    }
+
+
+    var ctx = document.getElementById('myNext').getContext('2d');
+    var myNext = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [{% for a in account %}'{{ a.account_name }}',{% endfor %}],
+    datasets: [{
+        label: 'Charts of Accounts Balance',
+        data: [{% for a in account %}{{ a.account_balance }}, {% endfor %}],
+        backgroundColor: coloR,
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+                borderWidth: 1
+            }]
+        },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+    });
+
+</script>
+
+{% endblock %}

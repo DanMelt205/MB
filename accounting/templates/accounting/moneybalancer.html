@@ -1,0 +1,33 @@
+{% extends "accounting/base.html"%}
+
+{% block title %} Landing Page {% endblock %}
+
+{% block content %}
+
+<style>
+    #myVideo {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        min-width: 100%;
+        min-height: 90%;
+        opacity: 0.8;
+        z-index: -1;
+    }
+
+    /* Add some content at the bottom of the video/page */
+</style>
+
+<video autoplay muted loop id="myVideo">
+    <source src="../../../media/videos//landingvideo.mp4" type="video/mp4">
+</video>
+
+
+<div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+    <p style="font-weight: 800; font-size: 10rem;color: white;text-shadow: 1px 6px 4px rgba(0,123,255,0.89);"> Money
+        Balancer.</p>
+    <p style="font-weight: 400; font-size: 2rem;color: white;text-shadow: 1px 6px 4px rgba(0,123,255,0.89);">Make sure
+        those accounts are right</p>
+</div>
+
+{% endblock %}
