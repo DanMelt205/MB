@@ -42,12 +42,12 @@
         - Actual statments need to be formated and designed better.
 
   -Added data few issues with design and input
-    [] Number currency with negative number infront.
-      - Possibly could fix but might cause different output than the correct at the moment.
-      - Trail Balance page needs work on the total of debit and of credits section.
-      - Not to mobile friendly in certain areas formating is off.
+      [] Number currency with negative number infront.
+        - Possibly could fix but might cause different output than the correct at the moment.
+        - Trail Balance page needs work on the total of debit and of credits section.
+        - Not to mobile friendly in certain areas formating is off.
 
   -Sprint5 - Financial Ratios and Dashbord Feature List
-    [] A section of the landing page can also be used to display important messages such as if there are 
-      journal entries waiting for approval, etc.
-        -Dashboard needs to be designed better. Could not find inspiration for the dashboard in accounting, that was simple enough to create or edit.
+      [] A section of the landing page can also be used to display important messages such as if there are 
+        journal entries waiting for approval, etc.
+          -Dashboard needs to be designed better. Could not find inspiration for the dashboard in accounting, that was simple enough to create or edit.
