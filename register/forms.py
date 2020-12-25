@@ -1,9 +1,15 @@
+import unicodedata
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.tokens import default_token_generator
 from .models import User
 from django.contrib.auth.forms import UserCreationForm
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+
 from datetime import datetime
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.template import loader
 
 
 class RegisterForm(UserCreationForm):
@@ -57,6 +63,15 @@ class SendEmailForm(forms.Form):
     attachment = forms.FileField(required=False)
 
 
+def _unicode_ci_compare(s1, s2):
+    """
+    Perform case-insensitive comparison of two identifiers, using the
+    recommended algorithm from Unicode Technical Report 36, section
+    2.11.2(B)(2).
+    """
+    return unicodedata.normalize('NFKC', s1).casefold() == unicodedata.normalize('NFKC', s2).casefold()
+
+
 class PasswordResetCustomUserForm(forms.Form):
     email = forms.EmailField(
         label="Email",
@@ -90,8 +105,8 @@ class PasswordResetCustomUserForm(forms.Form):
         that prevent inactive users and users with unusable passwords from
         resetting their password.
         """
-        email_field_name = UserModel.get_email_field_name()
-        active_users = UserModel._default_manager.filter(**{
+        email_field_name = User.get_email_field_name()
+        active_users = User._default_manager.filter(**{
             '%s__iexact' % email_field_name: email,
             'active': True,
         })
@@ -118,7 +133,7 @@ class PasswordResetCustomUserForm(forms.Form):
             domain = current_site.domain
         else:
             site_name = domain = domain_override
-        email_field_name = UserModel.get_email_field_name()
+        email_field_name = User.get_email_field_name()
         for user in self.get_users(email):
             user_email = getattr(user, email_field_name)
             context = {
