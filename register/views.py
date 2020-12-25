@@ -152,7 +152,7 @@ class UserProfileView(ListView, FormView):
             send_mail(
                 subject,
                 message,
-                'movethewaters@gmail.com',
+                'donotreplymbalancer@gmail.com',
                 [to_email],
                 fail_silently=False,
             )
